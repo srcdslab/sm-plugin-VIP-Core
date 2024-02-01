@@ -299,7 +299,7 @@ void UTIL_ADD_VIP_PLAYER(int iAdmin = 0,
 	{
 		GetClientName(iTarget, SZF(szQuery));
 		g_hDatabase.Escape(szQuery, SZF(szName));
-		iAccountID = GetSteamAccountID(iTarget);
+		iAccountID = GetSteamAccountID(iTarget, false);
 		UTIL_GetClientInfo(iTarget, SZF(szTargetInfo));
 	}
 	else
@@ -395,7 +395,7 @@ void UTIL_SET_VIP_PLAYER(int iAdmin = 0,
 	{
 		GetClientName(iTarget, SZF(szQuery));
 		g_hDatabase.Escape(szQuery, SZF(szName));
-		iAccountID = GetSteamAccountID(iTarget);
+		iAccountID = GetSteamAccountID(iTarget, false);
 		UTIL_GetClientInfo(iTarget, SZF(szTargetInfo));
 	}
 	else
