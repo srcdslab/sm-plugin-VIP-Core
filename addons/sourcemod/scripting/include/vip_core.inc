@@ -155,6 +155,21 @@ forward void VIP_OnFeatureRegistered(const char[] szFeature);
 forward void VIP_OnFeatureUnregistered(const char[] szFeature);
 
 /**
+ * Вызывается, когда плагин становится доступным.
+ * 
+ * @noreturn
+ */
+forward void VIPCore_OnPluginOK();
+
+/**
+ * Вызывается, когда плагин становится недоступным.
+ * Это может произойти, когда плагин приостановлен или выгружен.
+ * 
+ * @noreturn
+ */
+forward void VIPCore_OnPluginNotOK();
+
+/**
  *	Вызывается перед проверкой игрока на наличие VIP-статуса.
  *
  * @param iClient			Индекс игрока.

@@ -11,10 +11,14 @@ static Handle g_hGlobalForward_OnFeatureToggle;
 static Handle g_hGlobalForward_OnFeatureRegistered;
 static Handle g_hGlobalForward_OnFeatureUnregistered;
 static Handle g_hGlobalForward_OnClientDisconnect;
+static Handle g_hGlobalForward_StatusOK;
+static Handle g_hGlobalForward_StatusNotOK;
 
 void API_SetupForwards()
 {
 	// Global Forwards
+	g_hGlobalForward_StatusOK = CreateGlobalForward("VIPCore_OnPluginOK", ET_Ignore);
+	g_hGlobalForward_StatusNotOK = CreateGlobalForward("VIPCore_OnPluginNotOK", ET_Ignore);
 	g_hGlobalForward_OnClientPreLoad = CreateGlobalForward("VIP_OnClientPreLoad", ET_Hook, Param_Cell);
 	g_hGlobalForward_OnVIPLoaded = CreateGlobalForward("VIP_OnVIPLoaded", ET_Ignore);
 	g_hGlobalForward_OnClientLoaded = CreateGlobalForward("VIP_OnClientLoaded", ET_Ignore, Param_Cell, Param_Cell);
@@ -29,7 +33,39 @@ void API_SetupForwards()
 	g_hGlobalForward_OnClientDisconnect = CreateGlobalForward("VIP_OnClientDisconnect", ET_Ignore, Param_Cell, Param_Cell);
 }
 
+void API_OnAllPluginsLoaded()
+{
+	CreateForward_OnPluginOK();
+}
+
+void API_OnPluginPauseChange(bool pause)
+{
+	if (pause)
+		CreateForward_OnPluginNotOK();
+	else
+		CreateForward_OnPluginOK();
+}
+
+void API_OnPluginEnd()
+{
+	CreateForward_OnPluginNotOK();
+}
+
 // Global Forwards
+void CreateForward_OnPluginOK()
+{
+	DBG_API("CreateForward_OnPluginOK()")
+	Call_StartForward(g_hGlobalForward_StatusOK);
+	Call_Finish();
+}
+
+void CreateForward_OnPluginNotOK()
+{
+	DBG_API("CreateForward_OnPluginNotOK()")
+	Call_StartForward(g_hGlobalForward_StatusNotOK);
+	Call_Finish();
+}
+
 void CreateForward_OnVIPLoaded()
 {
 	DBG_API("CreateForward_OnVIPLoaded()")

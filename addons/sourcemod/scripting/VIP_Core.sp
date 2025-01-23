@@ -7,7 +7,11 @@
 #include <clientprefs>
 
 #if !defined VIP_VERSION
-#define VIP_VERSION		"3.0.5 R"
+#define VIP_V_MAJOR	"3"
+#define VIP_V_MINOR	"0"
+#define VIP_V_PATCH	"6"
+
+#define VIP_VERSION		"3.0.6 R"
 #endif
 
 
@@ -97,4 +101,15 @@ public void OnPluginStart()
 public void OnAllPluginsLoaded()
 {
 	DB_OnPluginStart();
+	API_OnAllPluginsLoaded();
+}
+
+public void OnPluginPauseChange(bool pause)
+{
+	API_OnPluginPauseChange(pause);
+}
+
+public void OnPluginEnd()
+{
+	API_OnPluginEnd();
 }
