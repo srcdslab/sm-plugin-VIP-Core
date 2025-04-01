@@ -498,23 +498,7 @@ public void SQL_Callback_OnVIPClientAdded(Database hOwner, DBResultSet hResult, 
 	hDataPack.Reset();
 
 	// Admin
-	int iAdmin, iTarget, iDuration, iExpires, iAccountID;
-	char szAdmin[PMP], szTargetInfo[PMP], szExpires[64], szDuration[64], szGroup[64];
-
-	iAdmin = GET_CID(hDataPack.ReadCell());
-	hDataPack.ReadString(SZF(szAdmin));
-
-	// Target
-	iTarget = GET_CID(hDataPack.ReadCell());
-	iAccountID = hDataPack.ReadCell();
-	hDataPack.ReadString(SZF(szTargetInfo));
-
-	// Data
-	iDuration = hDataPack.ReadCell();
-	iExpires = hDataPack.ReadCell();
-	hDataPack.ReadString(SZF(szGroup));
-
-	delete hDataPack;
+	int iAdmin = GET_CID(hDataPack.ReadCell());
 
 	if (hResult == null || szError[0])
 	{
