@@ -1,5 +1,3 @@
-
-
 int GET_UID(int iClient)
 {
 	return iClient > 0 ? UID(iClient):iClient;
@@ -482,20 +480,20 @@ public void SQL_UpdateVIP(any hPack)
 	{
 		FormatEx(SZF(szQuery), "INSERT INTO `vip_users` (`account_id`, `sid`, `expires`, `group`, `name`, `lastvisit`) VALUES (%d, %d, %d, '%s', '%s', %d) \
 		ON DUPLICATE KEY UPDATE `expires` = %d, `group` = '%s';", iAccountID, g_CVAR_iServerID, iExpires, szGroup, szName, iLastVisit, iExpires, szGroup);
-		DBG_SQL_Query(szQuery)
+		DBG_SQL_Query(szQuery);
 		g_hDatabase.Query(SQL_Callback_OnVIPClientAdded, szQuery, hDataPack);
 
 		return;
 	}
 
 	FormatEx(SZF(szQuery), "INSERT OR REPLACE INTO `vip_users` (`account_id`, `name`, `expires`, `group`, `lastvisit`) VALUES (%d, '%s', %d, '%s', %d);", iAccountID, szName, iExpires, szGroup, iLastVisit);
-	DBG_SQL_Query(szQuery)
+	DBG_SQL_Query(szQuery);
 	g_hDatabase.Query(SQL_Callback_OnVIPClientAdded, szQuery, hDataPack);
 }
 
 public void SQL_Callback_OnVIPClientAdded(Database hOwner, DBResultSet hResult, const char[] szError, any hPack)
 {
-	DBG_SQL_Response("SQL_Callback_OnVIPClientAdded")
+	DBG_SQL_Response("SQL_Callback_OnVIPClientAdded");
 	DataPack hDataPack = view_as<DataPack>(hPack);
 	hDataPack.Reset();
 
@@ -530,6 +528,36 @@ public void SQL_Callback_OnVIPClientAdded(Database hOwner, DBResultSet hResult, 
 		LogError("SQL_Callback_OnVIPClientAdded: %s", szError);
 		return;
 	}
+	
+	DBG_SQL_Response("hResult.AffectedRows = %d", hResult.AffectedRows);
+
+	if (!hResult.AffectedRows)
+	{
+		delete hDataPack;
+
+		if (iAdmin >= 0)
+		{
+			UTIL_Reply(iAdmin, "%t", "ADMIN_VIP_ADD_FAILED");
+		}
+		return;
+	}
+
+	int iTarget, iDuration, iExpires, iAccountID;
+	char szAdmin[PMP], szTargetInfo[PMP], szExpires[64], szDuration[64], szGroup[64];
+	
+	hDataPack.ReadString(SZF(szAdmin));
+	
+	// Target
+	iTarget = GET_CID(hDataPack.ReadCell());
+	iAccountID = hDataPack.ReadCell();
+	hDataPack.ReadString(SZF(szTargetInfo));
+
+	// Data
+	iDuration = hDataPack.ReadCell();
+	iExpires = hDataPack.ReadCell();
+	hDataPack.ReadString(SZF(szGroup));
+
+	delete hDataPack;
 
 	if (iTarget > 0)
 	{
