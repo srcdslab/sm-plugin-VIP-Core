@@ -19,7 +19,7 @@ jobs:
           SMVERSION_FULL=${{ matrix.sm-version }}
           echo "SMVERSION_SHORT=${SMVERSION_FULL:0:-2}" >> $GITHUB_ENV
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Setup SP
         uses: rumblefrog/setup-sp@master
@@ -49,7 +49,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
 
       - name: Find Assets
         shell: bash
@@ -64,7 +64,7 @@ jobs:
 
       - name: Create Release
         id: create_release
-        uses: actions/create-release@v1.0.0
+        uses: actions/create-release@v1.1.4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -74,7 +74,7 @@ jobs:
           prerelease: false
 
       - name: Upload Asset 1.11
-        uses: actions/upload-release-asset@v1.0.1
+        uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -84,7 +84,7 @@ jobs:
           asset_content_type: application/zip
 
       - name: Upload Asset 1.12
-        uses: actions/upload-release-asset@v1.0.1
+        uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
