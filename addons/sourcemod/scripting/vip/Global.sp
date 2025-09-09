@@ -70,11 +70,18 @@ stock const char g_szValueType[][] = {
 	"STRING"
 };
 
-stock const char g_szToggleState[][] = {
+stock const char g_szFeatureType[][] = {
 	"TOGGLABLE",
 	"SELECTABLE",
 	"HIDE"
 };
+
+stock const char g_szToggleState[][] = {
+	"DISABLED",
+	"ENABLED",
+	"NO_ACCESS"
+};
+
 
 #define FEATURE_NAME_LENGTH 64
 
