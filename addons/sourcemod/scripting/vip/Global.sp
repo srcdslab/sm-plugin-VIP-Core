@@ -62,11 +62,18 @@ enum
 	TIME_MODE_DAYS
 }
 
-stock const char g_szToggleStatus[][] =
-{
-	"DISABLED",
-	"ENABLED",
-	"NO_ACCESS"
+stock const char g_szValueType[][] = {
+	"VIP_NULL",
+	"INT",
+	"FLOAT",
+	"BOOL",
+	"STRING"
+};
+
+stock const char g_szToggleState[][] = {
+	"TOGGLABLE",
+	"SELECTABLE",
+	"HIDE"
 };
 
 #define FEATURE_NAME_LENGTH 64
