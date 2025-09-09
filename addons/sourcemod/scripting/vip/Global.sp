@@ -82,7 +82,6 @@ stock const char g_szToggleState[][] = {
 	"NO_ACCESS"
 };
 
-
 #define FEATURE_NAME_LENGTH 64
 
 char		g_szLogFile[PMP];
