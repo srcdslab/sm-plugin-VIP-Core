@@ -3,6 +3,9 @@ public void OnMapStart()
 	LoadSounds();
 	ReadDownloads();
 
+	// Start cache update timer (1 minute after map load)
+	CreateTimer(60.0, Timer_UpdateVIPCache, _, TIMER_FLAG_NO_MAPCHANGE);
+
 	if (g_hDatabase && (g_CVAR_iDeleteExpired != -1 || g_CVAR_iOutdatedExpired != -1))
 	{
 		RemoveExpAndOutPlayers();

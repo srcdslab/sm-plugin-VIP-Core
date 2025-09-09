@@ -24,7 +24,7 @@ void DB_Connect()
 		UNSET_BIT(GLOBAL_INFO, IS_LOADING);
 		return;
 	}
-	
+
 	SET_BIT(GLOBAL_INFO, IS_LOADING);
 
 	if (SQL_CheckConfig("vip_core")) // "vip_core"
@@ -50,7 +50,7 @@ public void OnDBConnect(Database hDatabase, const char[] szError, any data)
 	}
 
 	g_hDatabase = hDatabase;
-	
+
 	if (data == 1)
 	{
 		UNSET_BIT(GLOBAL_INFO, IS_MySQL);
@@ -69,9 +69,9 @@ public void OnDBConnect(Database hDatabase, const char[] szError, any data)
 			UNSET_BIT(GLOBAL_INFO, IS_MySQL);
 		}
 	}
-	
+
 	DBG_Database("OnDBConnect %x, %u - > (MySQL: %b)", g_hDatabase, g_hDatabase, GLOBAL_INFO & IS_MySQL);
-	
+
 	CreateTables();
 }
 
@@ -129,7 +129,14 @@ public void SQL_Callback_TableCreate(Database hOwner, DBResultSet hResult, const
 	UNSET_BIT(GLOBAL_INFO, IS_LOADING);
 
 	OnReadyToStart();
-	
+
+	// Load all VIPs into cache on first connection
+	if (g_bFirstVIPLoading)
+	{
+		DB_LoadAllVIPsToCache();
+		g_bFirstVIPLoading = false;
+	}
+
 	UTIL_ReloadVIPPlayers(0, false);
 
 	if (g_CVAR_iDeleteExpired != -1 || g_CVAR_iOutdatedExpired != -1)
@@ -332,7 +339,7 @@ public void SQL_Callback_RemoveClient(Database hOwner, DBResultSet hResult, cons
 	if (hResult.AffectedRows)
 	{
 		hPack.Reset();
-		
+
 		int iClientID = hPack.ReadCell();
 		int iAdmin = GET_CID(hPack.ReadCell());
 		bool bNotify = view_as<bool>(hPack.ReadCell());
@@ -355,6 +362,9 @@ public void SQL_Callback_RemoveClient(Database hOwner, DBResultSet hResult, cons
 		{
 			ReplyToCommand(iAdmin, "%t", "ADMIN_VIP_PLAYER_DELETED", szName, iClientID);
 		}
+
+		// Remove from cache
+		DB_RemoveVIPFromCache(iClientID);
 	}
 
 	delete hPack;
@@ -369,7 +379,7 @@ public void SQL_Callback_SelectExpiredAndOutdated(Database hOwner, DBResultSet h
 		LogError("SQL_Callback_SelectExpiredAndOutdated: %s", szError);
 		return;
 	}
-	
+
 	DBG_SQL_Response("hResult.RowCount = %d", hResult.RowCount);
 
 	if (hResult.RowCount)
@@ -388,4 +398,111 @@ public void SQL_Callback_SelectExpiredAndOutdated(Database hOwner, DBResultSet h
 			DB_RemoveClientFromID(iReason, _, iClientID, false, szName, szGroup);
 		}
 	}
+}
+
+// VIP Cache Management Functions
+void DB_LoadAllVIPsToCache()
+{
+	DBG_Database("DB_LoadAllVIPsToCache");
+
+	if (!g_hDatabase)
+	{
+		LogError("Database not connected for VIP cache loading");
+		return;
+	}
+
+	char szQuery[512];
+	char szWhere[64];
+
+	if (g_szSID[0])
+	{
+		#if USE_MORE_SERVERS
+		if (g_CVAR_iServerID != 0)
+		{
+			FormatEx(SZF(szWhere), " AND (`sid` = %d OR `sid` = 0)", g_CVAR_iServerID);
+		}
+		else
+		{
+			FormatEx(SZF(szWhere), " AND `sid` = 0");
+		}
+		#endif
+	}
+
+	FormatEx(SZF(szQuery), "SELECT `account_id`, `expires`, `group`, `name` FROM `vip_users` WHERE 1=1%s;", szWhere);
+
+	DBG_SQL_Query(szQuery);
+	g_hDatabase.Query(SQL_Callback_LoadAllVIPsToCache, szQuery, _, DBPrio_High);
+}
+
+public void SQL_Callback_LoadAllVIPsToCache(Database hOwner, DBResultSet hResult, const char[] szError, any data)
+{
+	DBG_SQL_Response("SQL_Callback_LoadAllVIPsToCache");
+
+	if (szError[0])
+	{
+		LogError("SQL_Callback_LoadAllVIPsToCache: %s", szError);
+		return;
+	}
+
+	// Clear existing cache
+	delete g_hVIPCache;
+	g_hVIPCache = new StringMap();
+
+	int iLoadedCount = 0;
+	VIPCacheData vipData;
+
+	int iCurrentTime = GetTime();
+	while (hResult.FetchRow())
+	{
+		vipData.iAccountID = hResult.FetchInt(0);
+		vipData.iExpires = hResult.FetchInt(1);
+		hResult.FetchString(2, SZF(vipData.szGroup));
+		hResult.FetchString(3, SZF(vipData.szName));
+
+		// Only cache non-expired VIPs (expires = 0 means permanent)
+		if (vipData.iExpires == 0 || vipData.iExpires > iCurrentTime)
+		{
+			char szKey[32];
+			IntToString(vipData.iAccountID, SZF(szKey));
+			g_hVIPCache.SetArray(szKey, vipData, sizeof(VIPCacheData));
+			iLoadedCount++;
+		}
+	}
+
+	LogMessage("VIP Cache loaded: %d VIP players cached", iLoadedCount);
+}
+
+public Action Timer_UpdateVIPCache(Handle hTimer)
+{
+	DB_LoadAllVIPsToCache();
+	return Plugin_Continue;
+}
+
+bool DB_GetVIPFromCache(int iAccountID, VIPCacheData vipData)
+{
+	char szKey[32];
+	IntToString(iAccountID, SZF(szKey));
+
+	return g_hVIPCache.GetArray(szKey, vipData, sizeof(VIPCacheData));
+}
+
+void DB_UpdateVIPInCache(int iAccountID, int iExpires, const char[] szGroup, const char[] szName)
+{
+	char szKey[32];
+	IntToString(iAccountID, SZF(szKey));
+
+	VIPCacheData vipData;
+	vipData.iAccountID = iAccountID;
+	vipData.iExpires = iExpires;
+	strcopy(SZF(vipData.szGroup), szGroup);
+	strcopy(SZF(vipData.szName), szName);
+
+	g_hVIPCache.SetArray(szKey, vipData, sizeof(VIPCacheData));
+}
+
+void DB_RemoveVIPFromCache(int iAccountID)
+{
+	char szKey[32];
+	IntToString(iAccountID, SZF(szKey));
+	g_hVIPCache.Remove(szKey);
 }

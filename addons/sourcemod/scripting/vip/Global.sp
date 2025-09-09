@@ -62,21 +62,8 @@ enum
 	TIME_MODE_DAYS
 }
 
-stock const char g_szValueType[][] = {
-	"VIP_NULL",
-	"INT",
-	"FLOAT",
-	"BOOL",
-	"STRING"
-};
-
-stock const char g_szFeatureType[][] = {
-	"TOGGLABLE",
-	"SELECTABLE",
-	"HIDE"
-};
-
-stock const char g_szToggleState[][] = {
+stock const char g_szToggleStatus[][] =
+{
 	"DISABLED",
 	"ENABLED",
 	"NO_ACCESS"
@@ -123,3 +110,15 @@ bool		g_CVAR_bLogsEnable;
 EngineVersion	g_EngineVersion;
 
 char		g_szSID[64];
+
+// VIP Cache System
+StringMap	g_hVIPCache;
+bool		g_bFirstVIPLoading;
+
+enum struct VIPCacheData
+{
+	int iAccountID;
+	int iExpires;
+	char szGroup[64];
+	char szName[MAX_NAME_LENGTH];
+}

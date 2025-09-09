@@ -12,6 +12,7 @@ void CMD_Setup()
 
 	#if DEBUG_MODE
 	RegAdminCmd("sm_vip_dump_features", DumpFeatures_CMD, ADMFLAG_ROOT);
+	RegAdminCmd("sm_vip_dump_cache", CMD_DumpVIPCache, ADMFLAG_ROOT);
 	#endif
 }
 
@@ -283,10 +284,10 @@ public Action DumpFeatures_CMD(int iClient, int iArgs)
 					GetPluginInfo(hPlugin, PlInfo_Name, SZF(szPluginName));
 					GetPluginInfo(hPlugin, PlInfo_Version, SZF(szPluginVersion));
 					GetPluginFilename(hPlugin, SZF(szPluginPath));
-					
+
 					strcopy(SZF(szFeatureType), g_szFeatureType[view_as<int>(hArray.Get(FEATURES_ITEM_TYPE))]);
 					strcopy(SZF(szFeatureValType), g_szValueType[view_as<int>(hArray.Get(FEATURES_VALUE_TYPE))]);
-					
+
 					hFile.WriteLine("%d. %-32s %-16s %-16s %-64s %-32s %-256s", i, szFeature, szFeatureType, szFeatureValType, szPluginName, szPluginVersion, szPluginPath);
 				}
 			}
@@ -295,6 +296,81 @@ public Action DumpFeatures_CMD(int iClient, int iArgs)
 		delete hFile;
 	}
 	
+	return Plugin_Handled;
+}
+
+public Action CMD_DumpVIPCache(int iClient, int iArgs)
+{
+	if (!CheckCommandAccess(iClient, "sm_admin", ADMFLAG_ROOT))
+	{
+		ReplyToCommand(iClient, "You don't have permission to use this command.");
+		return Plugin_Handled;
+	}
+
+	if (g_hVIPCache == null)
+	{
+		ReplyToCommand(iClient, "VIP Cache is not initialized.");
+		return Plugin_Handled;
+	}
+
+	bool bSaveToFile = false;
+	if (iArgs > 0)
+	{
+		char szArg[16];
+		GetCmdArg(1, SZF(szArg));
+		if (strcmp(szArg, "file", false) == 0)
+		{
+			bSaveToFile = true;
+		}
+	}
+
+	VIPCacheData vipData;
+	StringMapSnapshot snapshot = g_hVIPCache.Snapshot();
+
+	if (bSaveToFile)
+	{
+		char szFilePath[PLATFORM_MAX_PATH];
+		BuildPath(Path_SM, SZF(szFilePath), "logs/vip_cache_dump.txt");
+
+		File hFile = OpenFile(szFilePath, "w");
+		if (hFile == null)
+		{
+			ReplyToCommand(iClient, "Failed to create dump file: %s", szFilePath);
+			delete snapshot;
+			return Plugin_Handled;
+		}
+
+		for (int i = 0; i < snapshot.Length; i++)
+		{
+			char szKey[32];
+			snapshot.GetKey(i, SZF(szKey));
+
+			if (g_hVIPCache.GetArray(szKey, vipData, sizeof(VIPCacheData)))
+			{
+				char szLine[256];
+				FormatEx(SZF(szLine), "[%d] ID: %d | %s | Group: %s | Exp: %d", i + 1, vipData.iAccountID, vipData.szName, vipData.szGroup, vipData.iExpires);
+				hFile.WriteLine(szLine);
+			}
+		}
+
+		delete hFile;
+		ReplyToCommand(iClient, "VIP Cache dump saved to: %s", szFilePath);
+	}
+	else
+	{
+		for (int i = 0; i < snapshot.Length; i++)
+		{
+			char szKey[32];
+			snapshot.GetKey(i, SZF(szKey));
+
+			if (g_hVIPCache.GetArray(szKey, vipData, sizeof(VIPCacheData)))
+			{
+				ReplyToCommand(iClient, "[%d] ID: %d | %s | Group: %s | Exp: %d", i + 1, vipData.iAccountID, vipData.szName, vipData.szGroup, vipData.iExpires);
+			}
+		}
+	}
+
+	delete snapshot;
 	return Plugin_Handled;
 }
 #endif
