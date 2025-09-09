@@ -1,6 +1,15 @@
 name: Build
 
-on: [push, pull_request, workflow_dispatch]
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - '*'
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
 
 jobs:
   compile:
@@ -19,7 +28,7 @@ jobs:
           SMVERSION_FULL=${{ matrix.sm-version }}
           echo "SMVERSION_SHORT=${SMVERSION_FULL:0:-2}" >> $GITHUB_ENV
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup SP
         uses: rumblefrog/setup-sp@master
@@ -49,7 +58,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
 
       - name: Find Assets
         shell: bash
