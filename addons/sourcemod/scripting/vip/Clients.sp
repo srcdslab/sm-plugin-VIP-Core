@@ -79,7 +79,7 @@ void Clients_LoadClient(int iClient, bool bNotify)
 	Clients_LoadClientFromDB(iClient, iAccountID, bNotify, false);
 }
 
-void Clients_LoadClientFromDB(int iClient, int iAccountID, bool bNotify, bool bFromCache)
+void Clients_LoadClientFromDB(int iClient, int iAccountID, bool bNotify, bool bUpdateCache)
 {
 	char szQuery[512];
 	char szWhere[64];
@@ -101,7 +101,7 @@ void Clients_LoadClientFromDB(int iClient, int iAccountID, bool bNotify, bool bF
 	hDataPack.WriteCell(UID(iClient));
 	hDataPack.WriteCell(iAccountID);
 	hDataPack.WriteCell(bNotify);
-	hDataPack.WriteCell(bFromCache);
+	hDataPack.WriteCell(bUpdateCache);
 
 	DBG_SQL_Query(szQuery);
 	g_hDatabase.Query(SQL_Callback_OnClientAuthorized, szQuery, hDataPack);
@@ -191,7 +191,7 @@ public void SQL_Callback_OnClientAuthorized(Database hOwner, DBResultSet hResult
 	int iClient = CID(hDataPack.ReadCell());
 	int iAccountID = hDataPack.ReadCell();
 	bool bNotify = view_as<bool>(hDataPack.ReadCell());
-	bool bFromCache = view_as<bool>(hDataPack.ReadCell());
+	bool bUpdateCache = view_as<bool>(hDataPack.ReadCell());
 	delete hDataPack;
 
 	DBG_Clients("SQL_Callback_OnClientAuthorized: %d", iClient);
@@ -212,7 +212,7 @@ public void SQL_Callback_OnClientAuthorized(Database hOwner, DBResultSet hResult
 		hResult.FetchString(2, SZF(szName));
 
 		// Update cache with fresh data from database (only if not already from cache)
-		if (!bFromCache)
+		if (bUpdateCache)
 		{
 			DB_UpdateVIPInCache(iAccountID, iExpires, szGroup, szName);
 		}
