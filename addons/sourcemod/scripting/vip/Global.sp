@@ -123,3 +123,15 @@ bool		g_CVAR_bLogsEnable;
 EngineVersion	g_EngineVersion;
 
 char		g_szSID[64];
+
+// VIP Cache System
+StringMap	g_hVIPCache;
+bool		g_bFirstVIPLoading;
+
+enum struct VIPCacheData
+{
+	int iAccountID;
+	int iExpires;
+	char szGroup[64];
+	char szName[MAX_NAME_LENGTH];
+}

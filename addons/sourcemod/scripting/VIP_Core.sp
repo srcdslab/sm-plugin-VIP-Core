@@ -7,7 +7,7 @@
 #include <clientprefs>
 
 #if !defined VIP_VERSION
-#define VIP_VERSION		"3.0.6 R"
+#define VIP_VERSION		"3.1.0 R"
 #endif
 
 
@@ -66,6 +66,10 @@ public void OnPluginStart()
 	g_hFeaturesArray = new ArrayList(ByteCountToCells(FEATURE_NAME_LENGTH));
 	GLOBAL_TRIE = new StringMap();
 
+	// Initialize VIP Cache
+	g_hVIPCache = new StringMap();
+	g_bFirstVIPLoading = true;
+
 	// Fix DataPack positions in sm 1.10
 	DataPack hDataPack = new DataPack();
 	hDataPack.WriteCell(0);
@@ -92,6 +96,11 @@ public void OnPluginStart()
 	CMD_Setup();
 
 	g_EngineVersion = GetEngineVersion();
+}
+
+public void OnPluginEnd()
+{
+	delete g_hVIPCache;
 }
 
 public void OnAllPluginsLoaded()

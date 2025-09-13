@@ -1,7 +1,7 @@
 void ResetClient(int iClient)
 {
 	g_iClientInfo[iClient] = IS_LOADED;
-	
+
 	UTIL_CloseHandleEx(g_hFeatures[iClient]);
 	UTIL_CloseHandleEx(g_hFeatureStatus[iClient]);
 }
@@ -17,7 +17,7 @@ public void OnClientPutInServer(int iClient)
 {
 	//	g_iClientInfo[iClient] = 0;
 	DBG_Clients("OnClientPutInServer %N (%d): %b", iClient, iClient, g_iClientInfo[iClient]);
-	
+
 	if(!IsFakeClient(iClient) && !IsClientSourceTV(iClient))
 	{
 		Clients_CheckVipAccess(iClient, true, true);
@@ -35,7 +35,7 @@ public void OnClientDisconnect(int iClient)
 	{
 		CreateForward_OnClientDisconnect(iClient);
 	}
-	
+
 	ResetClient(iClient);
 	UTIL_CloseHandleEx(g_hClientData[iClient]);
 	g_iClientInfo[iClient] = 0;
@@ -62,12 +62,26 @@ void Clients_CheckVipAccess(int iClient, bool bNotify = false, bool bForward = f
 
 void Clients_LoadClient(int iClient, bool bNotify)
 {
-	char szQuery[512];
-	
 	int iAccountID = GetSteamAccountID(iClient);
 
 	DBG_Clients("Clients_LoadClient %N (%d), %b: - > %x, %u", iClient, iClient, g_iClientInfo[iClient], g_hDatabase, g_hDatabase);
 
+	// First, try to get VIP data from cache
+	VIPCacheData vipData;
+	if (DB_GetVIPFromCache(iAccountID, vipData))
+	{
+		DBG_Clients("VIP found in cache for %N (%d)", iClient, iClient);
+		Clients_ProcessVIPData(iClient, iAccountID, bNotify, vipData.iExpires, vipData.szGroup, vipData.szName);
+		return;
+	}
+
+	// If not in cache, query database
+	Clients_LoadClientFromDB(iClient, iAccountID, bNotify, false);
+}
+
+void Clients_LoadClientFromDB(int iClient, int iAccountID, bool bNotify, bool bUpdateCache)
+{
+	char szQuery[512];
 	char szWhere[64];
 	if(g_szSID[0])
 	{
@@ -87,9 +101,78 @@ void Clients_LoadClient(int iClient, bool bNotify)
 	hDataPack.WriteCell(UID(iClient));
 	hDataPack.WriteCell(iAccountID);
 	hDataPack.WriteCell(bNotify);
+	hDataPack.WriteCell(bUpdateCache);
 
 	DBG_SQL_Query(szQuery);
 	g_hDatabase.Query(SQL_Callback_OnClientAuthorized, szQuery, hDataPack);
+}
+
+void Clients_ProcessVIPData(int iClient, int iAccountID, bool bNotify, int iExpires, const char[] szGroup, const char[] szName)
+{
+	DBG_Clients("Clients_ProcessVIPData %N (%d): expires=%d, group=%s", iClient, iClient, iExpires, szGroup);
+
+	if (iExpires > 0)
+	{
+		int iTime = GetTime();
+
+		if (iTime > iExpires)
+		{
+			// Remove from cache when VIP expires
+			DB_RemoveVIPFromCache(iAccountID);
+
+			if (g_CVAR_iDeleteExpired == 0 || (g_CVAR_iDeleteExpired > 0 && iTime >= ((g_CVAR_iDeleteExpired * 86400) + iExpires)))
+			{
+				if (g_CVAR_bLogsEnable)
+				{
+					LogToFile(g_szLogFile, "%T", "REMOVING_PLAYER", LANG_SERVER, iClient);
+				}
+
+				DBG_Clients("Clients_ProcessVIPData %N (%d):\tDelete", iClient, iClient);
+				DB_RemoveClientFromID(REASON_EXPIRED, iClient, iAccountID, false, _, szGroup);
+			}
+
+			CreateForward_OnVIPClientRemoved(iClient, "Expired");
+
+			DisplayClientInfo(iClient, "expired_info");
+
+			g_iClientInfo[iClient] |= IS_LOADED;
+			CreateForward_OnClientLoaded(iClient);
+			return;
+		}
+
+		Clients_CreateExpiredTimer(iClient, iExpires, iTime);
+	}
+
+	if (szGroup[0] && UTIL_CheckValidVIPGroup(szGroup))
+	{
+		Clients_CreateClientVIPSettings(iClient, iExpires);
+
+		g_hFeatures[iClient].SetValue(KEY_CID, iAccountID);
+		g_hFeatures[iClient].SetString(KEY_GROUP, szGroup);
+
+		g_iClientInfo[iClient] |= IS_VIP|IS_LOADED;
+
+		CreateForward_OnClientLoaded(iClient);
+
+		DB_UpdateClient(iClient, szName);
+
+		if (bNotify)
+		{
+			if (g_CVAR_bAutoOpenMenu)
+			{
+				g_hVIPMenu.Display(iClient, MENU_TIME_FOREVER);
+			}
+
+			DisplayClientInfo(iClient, iExpires == 0 ? "connect_info_perm":"connect_info_time");
+		}
+
+		Clients_LoadVIPFeaturesPre(iClient);
+	}
+	else
+	{
+		LogError("Invalid VIP-Group/Некорректная VIP-группа: %s (Игрок: %d)", szGroup, iAccountID);
+		CreateForward_OnClientLoaded(iClient);
+	}
 }
 
 public void SQL_Callback_OnClientAuthorized(Database hOwner, DBResultSet hResult, const char[] szError, any hPack)
@@ -102,12 +185,13 @@ public void SQL_Callback_OnClientAuthorized(Database hOwner, DBResultSet hResult
 		delete hDataPack;
 		return;
 	}
-	
+
 	hDataPack.Reset();
-	
+
 	int iClient = CID(hDataPack.ReadCell());
 	int iAccountID = hDataPack.ReadCell();
 	bool bNotify = view_as<bool>(hDataPack.ReadCell());
+	bool bUpdateCache = view_as<bool>(hDataPack.ReadCell());
 	delete hDataPack;
 
 	DBG_Clients("SQL_Callback_OnClientAuthorized: %d", iClient);
@@ -121,75 +205,20 @@ public void SQL_Callback_OnClientAuthorized(Database hOwner, DBResultSet hResult
 		DBG_SQL_Response("hResult.FetchRow()");
 
 		int iExpires = hResult.FetchInt(0);
-		DBG_SQL_Response("hResult.FetchInt(0) = %d", iExpires);
-		if (iExpires > 0)
-		{
-			int iTime = GetTime();
-
-			if (iTime > iExpires)
-			{
-				if (g_CVAR_iDeleteExpired == 0 || (g_CVAR_iDeleteExpired > 0 && iTime >= ((g_CVAR_iDeleteExpired * 86400) + iExpires)))
-				{
-					if (g_CVAR_bLogsEnable)
-					{
-						LogToFile(g_szLogFile, "%T", "REMOVING_PLAYER", LANG_SERVER, iClient);
-					}
-
-					DBG_Clients("Clients_LoadClient %N (%d):\tDelete", iClient, iClient);
-
-					char szGroup[64];
-					hResult.FetchString(1, SZF(szGroup));
-
-					DB_RemoveClientFromID(REASON_EXPIRED, iClient, iAccountID, false, _, szGroup);
-				}
-
-				CreateForward_OnVIPClientRemoved(iClient, "Expired");
-				
-				DisplayClientInfo(iClient, "expired_info");
-				
-				g_iClientInfo[iClient] |= IS_LOADED;
-				CreateForward_OnClientLoaded(iClient);
-				return;
-			}
-			
-			Clients_CreateExpiredTimer(iClient, iExpires, iTime);
-		}
-
 		char szGroup[64];
+		char szName[MAX_NAME_LENGTH*2+1];
+
 		hResult.FetchString(1, SZF(szGroup));
-		DBG_SQL_Response("hResult.FetchString(1) = '%s", szGroup);
-		if (szGroup[0] && UTIL_CheckValidVIPGroup(szGroup))
+		hResult.FetchString(2, SZF(szName));
+
+		// Update cache with fresh data from database (only if not already from cache)
+		if (bUpdateCache)
 		{
-			Clients_CreateClientVIPSettings(iClient, iExpires);
-
-			g_hFeatures[iClient].SetValue(KEY_CID, iAccountID);
-
-			g_hFeatures[iClient].SetString(KEY_GROUP, szGroup);
-			
-			g_iClientInfo[iClient] |= IS_VIP|IS_LOADED;
-
-			CreateForward_OnClientLoaded(iClient);
-
-			char szName[MAX_NAME_LENGTH*2+1];
-			hResult.FetchString(2, SZF(szName));
-			DB_UpdateClient(iClient, szName);
-
-			if (bNotify)
-			{
-				if (g_CVAR_bAutoOpenMenu)
-				{
-					g_hVIPMenu.Display(iClient, MENU_TIME_FOREVER);
-				}
-
-				DisplayClientInfo(iClient, iExpires == 0 ? "connect_info_perm":"connect_info_time");
-			}
-
-			Clients_LoadVIPFeaturesPre(iClient);
+			DB_UpdateVIPInCache(iAccountID, iExpires, szGroup, szName);
 		}
-		else
-		{
-			LogError("Invalid VIP-Group/Некорректная VIP-группа: %s (Игрок: %d)", szGroup, iAccountID);
-		}
+
+		// Process VIP data
+		Clients_ProcessVIPData(iClient, iAccountID, bNotify, iExpires, szGroup, szName);
 		return;
 	}
 
@@ -219,7 +248,7 @@ void Clients_CreateClientVIPSettings(int iClient, int iExp)
 public void OnClientCookiesCached(int iClient)
 {
 	DBG_Clients("OnClientCookiesCached %d %N", iClient, iClient);
-	
+
 	DBG_Clients("AreClientCookiesCached %b", AreClientCookiesCached(iClient));
 }
 #endif
@@ -251,7 +280,7 @@ void Clients_LoadVIPFeaturesPre(int iClient, const char[] szFeature = NULL_STRIN
 		Clients_LoadVIPFeature(iClient, szFeature);
 		return;
 	}
-	
+
 	Clients_LoadVIPFeatures(iClient);
 }
 
@@ -260,7 +289,7 @@ public Action Timer_CheckCookies(Handle hTimer, Handle hDP)
 	DataPack hDataPack = view_as<DataPack>(hDP);
 	hDataPack.Reset();
 	int iClient = CID(hDataPack.ReadCell());
-	
+
 	DBG_Clients("Timer_CheckCookies -> iClient: %N (%d), IsClientVIP: %b,", iClient, iClient, view_as<bool>(g_iClientInfo[iClient] & IS_VIP));
 	if (iClient && g_iClientInfo[iClient] & IS_VIP)
 	{
@@ -419,7 +448,7 @@ bool GetValue(int iClient, VIP_ValueType ValueType, const char[] szFeature)
 				DBG_Clients("value: %f", fValue);
 				return g_hFeatures[iClient].SetValue(szFeature, fValue);
 			}
-			
+
 			return false;
 		}
 		case STRING:
@@ -449,7 +478,7 @@ void Clients_CreateExpiredTimer(int iClient, int iExp, int iTime)
 		if ((iTimeLeft + iTime) > iExp)
 		{
 			DBG_Clients("Clients_CreateExpiredTimer %N (%d):\tTimerDealy: %f", iClient, iClient, float((iExp - iTime) + 3));
-			
+
 			CreateTimer(float((iExp - iTime) + 3), Timer_VIP_Expired, UID(iClient), TIMER_FLAG_NO_MAPCHANGE);
 		}
 	}
@@ -490,7 +519,7 @@ public Action Timer_OnPlayerSpawn(Handle hTimer, any UserID)
 		if (iTeam > 1 && IsPlayerAlive(iClient))
 		{
 			DBG_Clients("Timer_OnPlayerSpawn: %N (%d)", iClient, iClient);
-			
+
 			if (g_iClientInfo[iClient] & IS_VIP)
 			{
 				int iExp;
@@ -499,7 +528,7 @@ public Action Timer_OnPlayerSpawn(Handle hTimer, any UserID)
 					Clients_ExpiredClient(iClient);
 				}
 			}
-			
+
 			g_iClientInfo[iClient] |= IS_SPAWNED;
 			CreateForward_OnPlayerSpawn(iClient, iTeam);
 		}
@@ -528,7 +557,7 @@ public void Event_RoundEnd(Event hEvent, const char[] sEvName, bool bDontBroadca
 public Action Timer_VIP_Expired(Handle hTimer, any UserID)
 {
 	DBG_Clients("Timer_VIP_Expired %d:", UserID);
-	
+
 	int iClient = CID(UserID);
 	if (iClient && g_iClientInfo[iClient] & IS_VIP)
 	{
@@ -536,7 +565,7 @@ public Action Timer_VIP_Expired(Handle hTimer, any UserID)
 		if (g_hFeatures[iClient].GetValue(KEY_EXPIRES, iExp) && iExp > 0 && iExp < GetTime())
 		{
 			DBG_Clients("Timer_VIP_Expired %N:", iClient);
-			
+
 			Clients_ExpiredClient(iClient);
 		}
 	}
@@ -548,30 +577,33 @@ void Clients_ExpiredClient(int iClient)
 {
 	DBG_Clients("Clients_ExpiredClient %N:", iClient);
 	Features_TurnOffAll(iClient);
-	
+
 	int iClientID;
 	g_hFeatures[iClient].GetValue(KEY_EXPIRES, iClientID);
 	if (g_CVAR_iDeleteExpired == 0 || GetTime() >= ((g_CVAR_iDeleteExpired*86400) + iClientID))
 	{
 		if (g_hFeatures[iClient].GetValue(KEY_CID, iClientID) && iClientID != -1)
 		{
+			// Remove from cache when VIP expires
+			DB_RemoveVIPFromCache(iClientID);
+
 			if (g_CVAR_bLogsEnable)
 			{
 				LogToFile(g_szLogFile, "%T", "REMOVING_PLAYER", LANG_SERVER, iClient);
 			}
-			
+
 			DB_RemoveClientFromID(REASON_EXPIRED, iClient, _, false);
 		}
 	}
-	
+
 	if(g_iClientInfo[iClient] & IS_MENU_OPEN)
 	{
 		CancelClientMenu(iClient);
 	}
 
 	ResetClient(iClient);
-	
+
 	CreateForward_OnVIPClientRemoved(iClient, "Expired");
-	
+
 	DisplayClientInfo(iClient, "expired_info");
 }
