@@ -132,9 +132,10 @@ void DisplayInfo(int iClient, const char[] szEvent, const char[] szType, char[] 
 					if (KvGetLangString(szBuffer, iBufLen, szClientLang, szServLang))
 					{
 						DebugMessage("KvGetLangString: (%s, %s) = '%s'", szClientLang, szServLang, szBuffer);
-						if (strncmp(szBuffer, "http://", 7, true) != 0)
+						if (strncmp(szBuffer, "http://", 7, false) != 0 &&
+					    strncmp(szBuffer, "https://", 8, false) != 0)
 						{
-							Format(szBuffer, 256, "http://%s", szBuffer);
+						    Format(szBuffer, iBufLen, "http://%s", szBuffer);
 						}
 
 						ShowMOTDPanel(iClient, "VIP_INFO", szBuffer, MOTDPANEL_TYPE_URL);
