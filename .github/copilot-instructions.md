@@ -45,9 +45,9 @@ addons/sourcemod/
 - Git for version control
 
 ### Build System
-- **CI/CD**: GitHub Actions (`.github/workflows/build.yml`)
-- **Dependency Management**: sourceknight.yaml
-- **Compilation**: `spcomp VIP_Core.sp -E -o ../plugins/VIP_Core.smx -i./include`
+- **CI/CD**: GitHub Actions (`.github/workflows/ci.yml`)
+- **Dependency Management**: none (no external SourcePawn include dependencies beyond SourceMod itself)
+- **Compilation**: `spcomp -i include -o ../plugins/VIP_Core.smx VIP_Core.sp`
 
 ### Local Development Setup
 ```bash
