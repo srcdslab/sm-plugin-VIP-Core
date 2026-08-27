@@ -280,7 +280,7 @@ void UTIL_ADD_VIP_PLAYER(int iAdmin = 0,
 						const char[] szGroup,
 						const char[] szByWho = NULL_STRING)
 {
-	char szQuery[PMP*2], szName[MNL*2+1];
+	char szQuery[PMP*2], szName[MNL];
 	char szAdmin[PMP], szTargetInfo[PMP];
 	int iExpires, iAccountID;
 
@@ -292,11 +292,10 @@ void UTIL_ADD_VIP_PLAYER(int iAdmin = 0,
 	{
 		iExpires = iDuration;
 	}
-	
+
 	if (iTarget)
 	{
-		GetClientName(iTarget, SZF(szQuery));
-		g_hDatabase.Escape(szQuery, SZF(szName));
+		GetClientName(iTarget, SZF(szName));
 		iAccountID = GetSteamAccountID(iTarget);
 		UTIL_GetClientInfo(iTarget, SZF(szTargetInfo));
 	}
@@ -353,7 +352,7 @@ void UTIL_ADD_VIP_PLAYER(int iAdmin = 0,
 	
 	if (GLOBAL_INFO & IS_MySQL)
 	{
-		FormatEx(SZF(szQuery), "INSERT INTO `vip_users` (`account_id`, `sid`, `expires`, `group`, `name`, `lastvisit`) VALUES (%d, %d, %d, '%s', '%s', %d) \
+		g_hDatabase.Format(SZF(szQuery), "INSERT INTO `vip_users` (`account_id`, `sid`, `expires`, `group`, `name`, `lastvisit`) VALUES (%d, %d, %d, '%s', '%s', %d) \
 		ON DUPLICATE KEY UPDATE `group` = VALUES(`group`), `expires` = IF(`expires` = 0, 0, IF(`expires` <= UNIX_TIMESTAMP(), VALUES(`expires`), `expires` + %d));",
 		iAccountID, g_CVAR_iServerID, iExpires, szGroup, szName, iLastVisit, iDuration);
 		DBG_SQL_Query(szQuery)
@@ -362,7 +361,7 @@ void UTIL_ADD_VIP_PLAYER(int iAdmin = 0,
 		return;
 	}
 
-	FormatEx(SZF(szQuery), "INSERT INTO `vip_users` (`account_id`, `name`, `expires`, `group`, `lastvisit`) VALUES (%d, '%s', %d, '%s', %d) \
+	g_hDatabase.Format(SZF(szQuery), "INSERT INTO `vip_users` (`account_id`, `name`, `expires`, `group`, `lastvisit`) VALUES (%d, '%s', %d, '%s', %d) \
 	ON CONFLICT (`account_id`) DO UPDATE SET \
 	`group` = excluded.`group` \
 	`expires` = CASE \
@@ -382,7 +381,7 @@ void UTIL_SET_VIP_PLAYER(int iAdmin = 0,
 						const char[] szGroup,
 						const char[] szByWho = NULL_STRING)
 {
-	char szQuery[PMP*2], szName[MNL*2+1];
+	char szQuery[PMP*2], szName[MNL];
 	char szAdmin[PMP], szTargetInfo[PMP];
 	int iExpires, iAccountID;
 
@@ -394,11 +393,10 @@ void UTIL_SET_VIP_PLAYER(int iAdmin = 0,
 	{
 		iExpires = iDuration;
 	}
-	
+
 	if (iTarget)
 	{
-		GetClientName(iTarget, SZF(szQuery));
-		g_hDatabase.Escape(szQuery, SZF(szName));
+		GetClientName(iTarget, SZF(szName));
 		iAccountID = GetSteamAccountID(iTarget);
 		UTIL_GetClientInfo(iTarget, SZF(szTargetInfo));
 	}
