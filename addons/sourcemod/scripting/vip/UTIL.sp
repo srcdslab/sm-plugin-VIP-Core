@@ -349,12 +349,16 @@ void UTIL_ADD_VIP_PLAYER(int iAdmin = 0,
 	hDataPack.WriteString(szGroup);
 
 	int iLastVisit = iTarget ? GetTime():0;
-	
+
+	char szNameEsc[MNL * 2 + 1], szGroupEsc[64 * 2 + 1];
+	g_hDatabase.Escape(szName, SZF(szNameEsc));
+	g_hDatabase.Escape(szGroup, SZF(szGroupEsc));
+
 	if (GLOBAL_INFO & IS_MySQL)
 	{
 		g_hDatabase.Format(SZF(szQuery), "INSERT INTO `vip_users` (`account_id`, `sid`, `expires`, `group`, `name`, `lastvisit`) VALUES (%d, %d, %d, '%s', '%s', %d) \
 		ON DUPLICATE KEY UPDATE `group` = VALUES(`group`), `expires` = IF(`expires` = 0, 0, IF(`expires` <= UNIX_TIMESTAMP(), VALUES(`expires`), `expires` + %d));",
-		iAccountID, g_CVAR_iServerID, iExpires, szGroup, szName, iLastVisit, iDuration);
+		iAccountID, g_CVAR_iServerID, iExpires, szGroupEsc, szNameEsc, iLastVisit, iDuration);
 		DBG_SQL_Query(szQuery)
 		g_hDatabase.Query(SQL_Callback_OnVIPClientAdded, szQuery, hDataPack);
 
@@ -369,7 +373,7 @@ void UTIL_ADD_VIP_PLAYER(int iAdmin = 0,
 	WHEN excluded.`expires` <= %d THEN excluded.`expires` \
 	ELSE `expires` + %d \
 	END;",
-	iAccountID, szName, iExpires, szGroup, iLastVisit, GetTime(), iDuration);
+	iAccountID, szNameEsc, iExpires, szGroupEsc, iLastVisit, GetTime(), iDuration);
 	DBG_SQL_Query(szQuery)
 	g_hDatabase.Query(SQL_Callback_OnVIPClientAdded, szQuery, hDataPack);
 }
@@ -452,12 +456,12 @@ public void SQL_UpdateVIP(any hPack)
 	DataPack hDataPack = view_as<DataPack>(hPack);
 	hDataPack.Reset();
 
-	int iTarget, iExpires, iAccountID, iLastVisit = iTarget ? GetTime() : 0;
-	char szQuery[PMP*2], szName[MNL*2+1], szAdmin[PMP], szTargetInfo[PMP], szGroup[64];
+	int iTarget, iExpires, iAccountID, iLastVisit;
+	char szQuery[PMP*2], szName[MNL], szAdmin[PMP], szTargetInfo[PMP], szGroup[64];
 
 	hDataPack.ReadCell();
 	hDataPack.ReadString(SZF(szAdmin));
-	
+
 	// Target
 	iTarget = GET_CID(hDataPack.ReadCell());
 	iAccountID = hDataPack.ReadCell();
@@ -468,17 +472,36 @@ public void SQL_UpdateVIP(any hPack)
 	iExpires = hDataPack.ReadCell();
 	hDataPack.ReadString(SZF(szGroup));
 
+	/* iTarget is only known after reading the pack above, so the name and
+	 * last-visit timestamp have to be derived here rather than at
+	 * declaration time (that previously always saw iTarget == 0, storing
+	 * an empty name and a lastvisit of 0 for online targets). */
+	if (iTarget)
+	{
+		GetClientName(iTarget, SZF(szName));
+		iLastVisit = GetTime();
+	}
+	else
+	{
+		strcopy(SZF(szName), "unknown");
+		iLastVisit = 0;
+	}
+
+	char szNameEsc[MNL * 2 + 1], szGroupEsc[64 * 2 + 1];
+	g_hDatabase.Escape(szName, SZF(szNameEsc));
+	g_hDatabase.Escape(szGroup, SZF(szGroupEsc));
+
 	if (GLOBAL_INFO & IS_MySQL)
 	{
 		FormatEx(SZF(szQuery), "INSERT INTO `vip_users` (`account_id`, `sid`, `expires`, `group`, `name`, `lastvisit`) VALUES (%d, %d, %d, '%s', '%s', %d) \
-		ON DUPLICATE KEY UPDATE `expires` = %d, `group` = '%s';", iAccountID, g_CVAR_iServerID, iExpires, szGroup, szName, iLastVisit, iExpires, szGroup);
+		ON DUPLICATE KEY UPDATE `expires` = %d, `group` = '%s';", iAccountID, g_CVAR_iServerID, iExpires, szGroupEsc, szNameEsc, iLastVisit, iExpires, szGroupEsc);
 		DBG_SQL_Query(szQuery);
 		g_hDatabase.Query(SQL_Callback_OnVIPClientAdded, szQuery, hDataPack);
 
 		return;
 	}
 
-	FormatEx(SZF(szQuery), "INSERT OR REPLACE INTO `vip_users` (`account_id`, `name`, `expires`, `group`, `lastvisit`) VALUES (%d, '%s', %d, '%s', %d);", iAccountID, szName, iExpires, szGroup, iLastVisit);
+	FormatEx(SZF(szQuery), "INSERT OR REPLACE INTO `vip_users` (`account_id`, `name`, `expires`, `group`, `lastvisit`) VALUES (%d, '%s', %d, '%s', %d);", iAccountID, szNameEsc, iExpires, szGroupEsc, iLastVisit);
 	DBG_SQL_Query(szQuery);
 	g_hDatabase.Query(SQL_Callback_OnVIPClientAdded, szQuery, hDataPack);
 }
