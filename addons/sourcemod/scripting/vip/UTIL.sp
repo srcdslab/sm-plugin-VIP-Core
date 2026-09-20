@@ -350,15 +350,11 @@ void UTIL_ADD_VIP_PLAYER(int iAdmin = 0,
 
 	int iLastVisit = iTarget ? GetTime():0;
 
-	char szNameEsc[MNL * 2 + 1], szGroupEsc[64 * 2 + 1];
-	g_hDatabase.Escape(szName, SZF(szNameEsc));
-	g_hDatabase.Escape(szGroup, SZF(szGroupEsc));
-
 	if (GLOBAL_INFO & IS_MySQL)
 	{
 		g_hDatabase.Format(SZF(szQuery), "INSERT INTO `vip_users` (`account_id`, `sid`, `expires`, `group`, `name`, `lastvisit`) VALUES (%d, %d, %d, '%s', '%s', %d) \
 		ON DUPLICATE KEY UPDATE `group` = VALUES(`group`), `expires` = IF(`expires` = 0, 0, IF(`expires` <= UNIX_TIMESTAMP(), VALUES(`expires`), `expires` + %d));",
-		iAccountID, g_CVAR_iServerID, iExpires, szGroupEsc, szNameEsc, iLastVisit, iDuration);
+		iAccountID, g_CVAR_iServerID, iExpires, szGroup, szName, iLastVisit, iDuration);
 		DBG_SQL_Query(szQuery)
 		g_hDatabase.Query(SQL_Callback_OnVIPClientAdded, szQuery, hDataPack);
 
@@ -373,7 +369,7 @@ void UTIL_ADD_VIP_PLAYER(int iAdmin = 0,
 	WHEN excluded.`expires` <= %d THEN excluded.`expires` \
 	ELSE `expires` + %d \
 	END;",
-	iAccountID, szNameEsc, iExpires, szGroupEsc, iLastVisit, GetTime(), iDuration);
+	iAccountID, szName, iExpires, szGroup, iLastVisit, GetTime(), iDuration);
 	DBG_SQL_Query(szQuery)
 	g_hDatabase.Query(SQL_Callback_OnVIPClientAdded, szQuery, hDataPack);
 }

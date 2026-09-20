@@ -185,10 +185,9 @@ void DB_UpdateClient(int iClient, const char[] szDbName = NULL_STRING)
 
 	if (g_CVAR_bUpdateName || !strcmp(szDbName, "unknown"))
 	{
-		char szName[MNL], szNameEsc[MNL * 2 + 1];
+		char szName[MNL];
 		GetClientName(iClient, SZF(szName));
-		g_hDatabase.Escape(szName, SZF(szNameEsc));
-		g_hDatabase.Format(SZF(szQuery), "UPDATE `vip_users` SET `name` = '%s', `lastvisit` = %d WHERE `account_id` = %d%s;", szNameEsc, GetTime(), iClientID, g_szSID);
+		g_hDatabase.Format(SZF(szQuery), "UPDATE `vip_users` SET `name` = '%s', `lastvisit` = %d WHERE `account_id` = %d%s;", szName, GetTime(), iClientID, g_szSID);
 	}
 	else
 	{
