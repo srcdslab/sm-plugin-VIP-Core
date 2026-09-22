@@ -363,7 +363,7 @@ void UTIL_ADD_VIP_PLAYER(int iAdmin = 0,
 
 	g_hDatabase.Format(SZF(szQuery), "INSERT INTO `vip_users` (`account_id`, `name`, `expires`, `group`, `lastvisit`) VALUES (%d, '%s', %d, '%s', %d) \
 	ON CONFLICT (`account_id`) DO UPDATE SET \
-	`group` = excluded.`group` \
+	`group` = excluded.`group`, \
 	`expires` = CASE \
 	WHEN excluded.`expires` = 0 THEN 0 \
 	WHEN excluded.`expires` <= %d THEN excluded.`expires` \
@@ -472,7 +472,7 @@ public void SQL_UpdateVIP(any hPack)
 	 * last-visit timestamp have to be derived here rather than at
 	 * declaration time (that previously always saw iTarget == 0, storing
 	 * an empty name and a lastvisit of 0 for online targets). */
-	if (iTarget)
+	if (iTarget > 0)
 	{
 		GetClientName(iTarget, SZF(szName));
 		iLastVisit = GetTime();
@@ -483,21 +483,23 @@ public void SQL_UpdateVIP(any hPack)
 		iLastVisit = 0;
 	}
 
-	char szNameEsc[MNL * 2 + 1], szGroupEsc[64 * 2 + 1];
-	g_hDatabase.Escape(szName, SZF(szNameEsc));
-	g_hDatabase.Escape(szGroup, SZF(szGroupEsc));
-
 	if (GLOBAL_INFO & IS_MySQL)
 	{
-		FormatEx(SZF(szQuery), "INSERT INTO `vip_users` (`account_id`, `sid`, `expires`, `group`, `name`, `lastvisit`) VALUES (%d, %d, %d, '%s', '%s', %d) \
-		ON DUPLICATE KEY UPDATE `expires` = %d, `group` = '%s';", iAccountID, g_CVAR_iServerID, iExpires, szGroupEsc, szNameEsc, iLastVisit, iExpires, szGroupEsc);
+		g_hDatabase.Format(SZF(szQuery), "INSERT INTO `vip_users` (`account_id`, `sid`, `expires`, `group`, `name`, `lastvisit`) VALUES (%d, %d, %d, '%s', '%s', %d) \
+		ON DUPLICATE KEY UPDATE `expires` = %d, `group` = '%s';", iAccountID, g_CVAR_iServerID, iExpires, szGroup, szName, iLastVisit, iExpires, szGroup);
 		DBG_SQL_Query(szQuery);
 		g_hDatabase.Query(SQL_Callback_OnVIPClientAdded, szQuery, hDataPack);
 
 		return;
 	}
 
-	FormatEx(SZF(szQuery), "INSERT OR REPLACE INTO `vip_users` (`account_id`, `name`, `expires`, `group`, `lastvisit`) VALUES (%d, '%s', %d, '%s', %d);", iAccountID, szNameEsc, iExpires, szGroupEsc, iLastVisit);
+	/* Use a partial upsert (like the MySQL branch above) instead of
+	 * INSERT OR REPLACE: REPLACE rewrites the whole row on a PK conflict,
+	 * which would blow away a previously known name/lastvisit for an
+	 * existing account with 'unknown'/0 whenever sm_setvip targets an
+	 * offline account that's already in the table. */
+	g_hDatabase.Format(SZF(szQuery), "INSERT INTO `vip_users` (`account_id`, `name`, `expires`, `group`, `lastvisit`) VALUES (%d, '%s', %d, '%s', %d) \
+	ON CONFLICT (`account_id`) DO UPDATE SET `expires` = %d, `group` = '%s';", iAccountID, szName, iExpires, szGroup, iLastVisit, iExpires, szGroup);
 	DBG_SQL_Query(szQuery);
 	g_hDatabase.Query(SQL_Callback_OnVIPClientAdded, szQuery, hDataPack);
 }
