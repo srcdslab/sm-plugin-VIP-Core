@@ -349,7 +349,7 @@ void UTIL_ADD_VIP_PLAYER(int iAdmin = 0,
 	hDataPack.WriteString(szGroup);
 
 	int iLastVisit = iTarget ? GetTime():0;
-
+	
 	if (GLOBAL_INFO & IS_MySQL)
 	{
 		g_hDatabase.Format(SZF(szQuery), "INSERT INTO `vip_users` (`account_id`, `sid`, `expires`, `group`, `name`, `lastvisit`) VALUES (%d, %d, %d, '%s', '%s', %d) \
@@ -408,6 +408,12 @@ void UTIL_SET_VIP_PLAYER(int iAdmin = 0,
 		FormatEx(SZF(szTargetInfo), "unknown (%s, unknown)", szQuery);
 	}
 
+	if (iAccountID == 0)
+	{
+		UTIL_Reply(iAdmin, "%t", "ADMIN_VIP_ADD_FAILED");
+		return;
+	}
+
 	DataPack hDataPack = new DataPack();
 
 	// Admin
@@ -440,67 +446,29 @@ void UTIL_SET_VIP_PLAYER(int iAdmin = 0,
 
 	// Data
 	hDataPack.WriteCell(iDuration);
-	hDataPack.WriteCell(iExpires);	
+	hDataPack.WriteCell(iExpires);
 	hDataPack.WriteString(szGroup);
 
-	SQL_UpdateVIP(hDataPack);
-}
-
-public void SQL_UpdateVIP(any hPack)
-{
-	DBG_SQL_Response("SQL_UpdateVIP")
-	DataPack hDataPack = view_as<DataPack>(hPack);
-	hDataPack.Reset();
-
-	int iTarget, iExpires, iAccountID, iLastVisit;
-	char szQuery[PMP*2], szName[MNL], szAdmin[PMP], szTargetInfo[PMP], szGroup[64];
-
-	hDataPack.ReadCell();
-	hDataPack.ReadString(SZF(szAdmin));
-
-	// Target
-	iTarget = GET_CID(hDataPack.ReadCell());
-	iAccountID = hDataPack.ReadCell();
-	hDataPack.ReadString(SZF(szTargetInfo));
-
-	// Data
-	hDataPack.ReadCell();
-	iExpires = hDataPack.ReadCell();
-	hDataPack.ReadString(SZF(szGroup));
-
-	/* iTarget is only known after reading the pack above, so the name and
-	 * last-visit timestamp have to be derived here rather than at
-	 * declaration time (that previously always saw iTarget == 0, storing
-	 * an empty name and a lastvisit of 0 for online targets). */
-	if (iTarget > 0)
-	{
-		GetClientName(iTarget, SZF(szName));
-		iLastVisit = GetTime();
-	}
-	else
-	{
-		strcopy(SZF(szName), "unknown");
-		iLastVisit = 0;
-	}
+	int iLastVisit = iTarget ? GetTime():0;
 
 	if (GLOBAL_INFO & IS_MySQL)
 	{
 		g_hDatabase.Format(SZF(szQuery), "INSERT INTO `vip_users` (`account_id`, `sid`, `expires`, `group`, `name`, `lastvisit`) VALUES (%d, %d, %d, '%s', '%s', %d) \
-		ON DUPLICATE KEY UPDATE `expires` = %d, `group` = '%s';", iAccountID, g_CVAR_iServerID, iExpires, szGroup, szName, iLastVisit, iExpires, szGroup);
-		DBG_SQL_Query(szQuery);
+		ON DUPLICATE KEY UPDATE `expires` = VALUES(`expires`), `group` = VALUES(`group`);",
+		iAccountID, g_CVAR_iServerID, iExpires, szGroup, szName, iLastVisit);
+		DBG_SQL_Query(szQuery)
 		g_hDatabase.Query(SQL_Callback_OnVIPClientAdded, szQuery, hDataPack);
 
 		return;
 	}
 
-	/* Use a partial upsert (like the MySQL branch above) instead of
-	 * INSERT OR REPLACE: REPLACE rewrites the whole row on a PK conflict,
-	 * which would blow away a previously known name/lastvisit for an
-	 * existing account with 'unknown'/0 whenever sm_setvip targets an
-	 * offline account that's already in the table. */
+	/* Partial upsert, like the MySQL branch above: INSERT OR REPLACE rewrites the
+	 * whole row and would overwrite a known name/lastvisit with 'unknown'/0 when
+	 * sm_setvip targets an offline account that is already in the table. */
 	g_hDatabase.Format(SZF(szQuery), "INSERT INTO `vip_users` (`account_id`, `name`, `expires`, `group`, `lastvisit`) VALUES (%d, '%s', %d, '%s', %d) \
-	ON CONFLICT (`account_id`) DO UPDATE SET `expires` = %d, `group` = '%s';", iAccountID, szName, iExpires, szGroup, iLastVisit, iExpires, szGroup);
-	DBG_SQL_Query(szQuery);
+	ON CONFLICT (`account_id`) DO UPDATE SET `expires` = excluded.`expires`, `group` = excluded.`group`;",
+	iAccountID, szName, iExpires, szGroup, iLastVisit);
+	DBG_SQL_Query(szQuery)
 	g_hDatabase.Query(SQL_Callback_OnVIPClientAdded, szQuery, hDataPack);
 }
 
