@@ -363,7 +363,7 @@ void UTIL_ADD_VIP_PLAYER(int iAdmin = 0,
 
 	g_hDatabase.Format(SZF(szQuery), "INSERT INTO `vip_users` (`account_id`, `name`, `expires`, `group`, `lastvisit`) VALUES (%d, '%s', %d, '%s', %d) \
 	ON CONFLICT (`account_id`) DO UPDATE SET \
-	`group` = excluded.`group` \
+	`group` = excluded.`group`, \
 	`expires` = CASE \
 	WHEN excluded.`expires` = 0 THEN 0 \
 	WHEN excluded.`expires` <= %d THEN excluded.`expires` \
@@ -462,7 +462,11 @@ void UTIL_SET_VIP_PLAYER(int iAdmin = 0,
 		return;
 	}
 
-	g_hDatabase.Format(SZF(szQuery), "INSERT OR REPLACE INTO `vip_users` (`account_id`, `name`, `expires`, `group`, `lastvisit`) VALUES (%d, '%s', %d, '%s', %d);",
+	/* Partial upsert, like the MySQL branch above: INSERT OR REPLACE rewrites the
+	 * whole row and would overwrite a known name/lastvisit with 'unknown'/0 when
+	 * sm_setvip targets an offline account that is already in the table. */
+	g_hDatabase.Format(SZF(szQuery), "INSERT INTO `vip_users` (`account_id`, `name`, `expires`, `group`, `lastvisit`) VALUES (%d, '%s', %d, '%s', %d) \
+	ON CONFLICT (`account_id`) DO UPDATE SET `expires` = excluded.`expires`, `group` = excluded.`group`;",
 	iAccountID, szName, iExpires, szGroup, iLastVisit);
 	DBG_SQL_Query(szQuery)
 	g_hDatabase.Query(SQL_Callback_OnVIPClientAdded, szQuery, hDataPack);
