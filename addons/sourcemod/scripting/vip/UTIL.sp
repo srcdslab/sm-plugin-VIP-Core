@@ -408,6 +408,12 @@ void UTIL_SET_VIP_PLAYER(int iAdmin = 0,
 		FormatEx(SZF(szTargetInfo), "unknown (%s, unknown)", szQuery);
 	}
 
+	if (iAccountID == 0)
+	{
+		UTIL_Reply(iAdmin, "%t", "ADMIN_VIP_ADD_FAILED");
+		return;
+	}
+
 	DataPack hDataPack = new DataPack();
 
 	// Admin
@@ -440,46 +446,25 @@ void UTIL_SET_VIP_PLAYER(int iAdmin = 0,
 
 	// Data
 	hDataPack.WriteCell(iDuration);
-	hDataPack.WriteCell(iExpires);	
+	hDataPack.WriteCell(iExpires);
 	hDataPack.WriteString(szGroup);
 
-	SQL_UpdateVIP(hDataPack);
-}
-
-public void SQL_UpdateVIP(any hPack)
-{
-	DBG_SQL_Response("SQL_UpdateVIP")
-	DataPack hDataPack = view_as<DataPack>(hPack);
-	hDataPack.Reset();
-
-	int iTarget, iExpires, iAccountID, iLastVisit = iTarget ? GetTime() : 0;
-	char szQuery[PMP*2], szName[MNL*2+1], szAdmin[PMP], szTargetInfo[PMP], szGroup[64];
-
-	hDataPack.ReadCell();
-	hDataPack.ReadString(SZF(szAdmin));
-	
-	// Target
-	iTarget = GET_CID(hDataPack.ReadCell());
-	iAccountID = hDataPack.ReadCell();
-	hDataPack.ReadString(SZF(szTargetInfo));
-
-	// Data
-	hDataPack.ReadCell();
-	iExpires = hDataPack.ReadCell();
-	hDataPack.ReadString(SZF(szGroup));
+	int iLastVisit = iTarget ? GetTime():0;
 
 	if (GLOBAL_INFO & IS_MySQL)
 	{
-		FormatEx(SZF(szQuery), "INSERT INTO `vip_users` (`account_id`, `sid`, `expires`, `group`, `name`, `lastvisit`) VALUES (%d, %d, %d, '%s', '%s', %d) \
-		ON DUPLICATE KEY UPDATE `expires` = %d, `group` = '%s';", iAccountID, g_CVAR_iServerID, iExpires, szGroup, szName, iLastVisit, iExpires, szGroup);
-		DBG_SQL_Query(szQuery);
+		g_hDatabase.Format(SZF(szQuery), "INSERT INTO `vip_users` (`account_id`, `sid`, `expires`, `group`, `name`, `lastvisit`) VALUES (%d, %d, %d, '%s', '%s', %d) \
+		ON DUPLICATE KEY UPDATE `expires` = VALUES(`expires`), `group` = VALUES(`group`);",
+		iAccountID, g_CVAR_iServerID, iExpires, szGroup, szName, iLastVisit);
+		DBG_SQL_Query(szQuery)
 		g_hDatabase.Query(SQL_Callback_OnVIPClientAdded, szQuery, hDataPack);
 
 		return;
 	}
 
-	FormatEx(SZF(szQuery), "INSERT OR REPLACE INTO `vip_users` (`account_id`, `name`, `expires`, `group`, `lastvisit`) VALUES (%d, '%s', %d, '%s', %d);", iAccountID, szName, iExpires, szGroup, iLastVisit);
-	DBG_SQL_Query(szQuery);
+	g_hDatabase.Format(SZF(szQuery), "INSERT OR REPLACE INTO `vip_users` (`account_id`, `name`, `expires`, `group`, `lastvisit`) VALUES (%d, '%s', %d, '%s', %d);",
+	iAccountID, szName, iExpires, szGroup, iLastVisit);
+	DBG_SQL_Query(szQuery)
 	g_hDatabase.Query(SQL_Callback_OnVIPClientAdded, szQuery, hDataPack);
 }
 
