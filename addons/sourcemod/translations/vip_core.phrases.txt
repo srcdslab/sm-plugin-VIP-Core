@@ -232,7 +232,7 @@
 	{
 		"#format"	"{1:s},{2:s}"
 		"en"		"The player {1} set the duration of VIP-status to {2}"
-		"de"		"Geben Sie in den Chat die Name, SteamID oder die IP-Adresse"
+		"de"		"Der Spieler {1} hat die Dauer des VIP-Status auf {2} gesetzt"
 		"fr"		"Le joueur {1} à défini la durée du status VIP à {2}"
 		"fi"		"Pelaajalle {1} on asetettu VIP-statuksen kesto {2}"
 		"lv"		"Spēlētājs {1} nomainījis VIP statusa ilgumu uz {2}"
