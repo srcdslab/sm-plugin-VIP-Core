@@ -238,8 +238,8 @@ void Clients_CreateClientVIPSettings(int iClient, int iExp)
 	g_hFeatures[iClient] = new StringMap();
 	g_hFeatureStatus[iClient] = new StringMap();
 	*/
-	g_hFeatures[iClient] = CreateTrie();
-	g_hFeatureStatus[iClient] = CreateTrie();
+	g_hFeatures[iClient] = new StringMap();
+	g_hFeatureStatus[iClient] = new StringMap();
 
 	g_hFeatures[iClient].SetValue(KEY_EXPIRES, iExp);
 }
@@ -373,9 +373,9 @@ void Clients_LoadFeature(int iClient, const char[] szFeature)
 	if (view_as<VIP_FeatureType>(hArray.Get(FEATURES_ITEM_TYPE)) == TOGGLABLE)
 	{
 		static char szBuffer[4];
-		static Handle hCookie;
-		hCookie = view_as<Handle>(hArray.Get(FEATURES_COOKIE));
-		GetClientCookie(iClient, hCookie, SZF(szBuffer));
+		static Cookie hCookie;
+		hCookie = view_as<Cookie>(hArray.Get(FEATURES_COOKIE));
+		hCookie.Get(iClient, SZF(szBuffer));
 		eStatus = view_as<VIP_ToggleState>(StringToInt(szBuffer));
 		DBG_Clients("GetFeatureCookie: '%s'", szBuffer);
 		if (szBuffer[0] == '\0' || !Features_IsValidStatus(eStatus))
@@ -388,7 +388,7 @@ void Clients_LoadFeature(int iClient, const char[] szFeature)
 			}
 
 			IntToString(view_as<int>(eStatus), SZF(szBuffer));
-			SetClientCookie(iClient, hCookie, szBuffer);
+			hCookie.Set(iClient, szBuffer);
 			//	Features_SaveStatus(iClient, szFeature, hCookie, eStatus);
 		}
 	}
