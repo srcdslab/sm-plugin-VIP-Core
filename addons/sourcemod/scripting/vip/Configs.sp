@@ -48,7 +48,6 @@ void ReadSortingMenu()
 	if (g_hSortArray != null)
 	{
 		delete g_hSortArray;
-		g_hSortArray = null;
 	}
 
 	char szFeature[PMP];
@@ -77,7 +76,6 @@ void ReadSortingMenu()
 	if (g_hSortArray.Length == 0)
 	{
 		delete g_hSortArray;
-		g_hSortArray = null;
 	}
 }
 

@@ -22,7 +22,6 @@ void UTIL_CloseHandleEx(Handle &hValue)
 	if (hValue != null)
 	{
 		delete hValue;
-		hValue = null;
 	}
 }
 
