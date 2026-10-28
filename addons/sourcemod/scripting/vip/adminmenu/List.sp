@@ -193,6 +193,11 @@ public int MenuHandler_SearchPlayersListMenu(Menu hMenu, MenuAction action, int 
 void ShowVipPlayersFromDBMenu(int iClient, int iOffset = 0)
 {
 	LogMessage("ShowVipPlayersFromDBMenu");
+	if (!g_hDatabase)
+	{
+		return;
+	}
+
 	g_hClientData[iClient].SetValue(DATA_KEY_MenuListType, MENU_TYPE_DB_LIST);
 	g_hClientData[iClient].SetValue(DATA_KEY_Offset, iOffset);
 
@@ -208,7 +213,7 @@ void ShowVipPlayersFromDBMenu(int iClient, int iOffset = 0)
 		}
 		else
 		{
-			FormatEx(SZF(szWhere), " AND `name` LIKE '%%%s%%'", szSearch);
+			g_hDatabase.Format(SZF(szWhere), " AND `name` LIKE '%%%s%%'", szSearch);
 		}
 	}
 

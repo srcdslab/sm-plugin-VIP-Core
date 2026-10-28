@@ -419,12 +419,16 @@ public int Native_SetClientVIPGroup(Handle hPlugin, int iNumParams)
 				if (view_as<bool>(GetNativeCell(3)))
 				{
 					int iClientID;
-					if (g_hFeatures[iClient].GetValue(KEY_CID, iClientID) && iClientID != -1)
+					if (g_hFeatures[iClient].GetValue(KEY_CID, iClientID) && iClientID != -1 && g_hDatabase)
 					{
 						char szQuery[256];
-						FormatEx(SZF(szQuery), "UPDATE `vip_users` SET `group` = '%s' WHERE `account_id` = %d%s;", szGroup, iClientID, g_szSID);
+						g_hDatabase.Format(SZF(szQuery), "UPDATE `vip_users` SET `group` = '%s' WHERE `account_id` = %d%s;", szGroup, iClientID, g_szSID);
 						DBG_SQL_Query(szQuery);
-						g_hDatabase.Query(SQL_Callback_ChangeClientSettings, szQuery, UID(iClient));
+
+						DataPack hPack = new DataPack();
+						hPack.WriteCell(UID(iClient));
+						hPack.WriteCell(iClientID);
+						g_hDatabase.Query(SQL_Callback_ChangeClientSettings, szQuery, hPack);
 
 						if (g_CVAR_bLogsEnable)
 						{
@@ -483,12 +487,16 @@ public int Native_SetClientAccessTime(Handle hPlugin, int iNumParams)
 			if (view_as<bool>(GetNativeCell(3)))
 			{
 				int iClientID;
-				if (g_hFeatures[iClient].GetValue(KEY_CID, iClientID) && iClientID != -1)
+				if (g_hFeatures[iClient].GetValue(KEY_CID, iClientID) && iClientID != -1 && g_hDatabase)
 				{
 					char szQuery[256];
 					FormatEx(SZF(szQuery), "UPDATE `vip_users` SET `expires` = %d WHERE `account_id` = %d%s;", iTime, iClientID, g_szSID);
 					DBG_SQL_Query(szQuery);
-					g_hDatabase.Query(SQL_Callback_ChangeClientSettings, szQuery, UID(iClient));
+
+					DataPack hPack = new DataPack();
+					hPack.WriteCell(UID(iClient));
+					hPack.WriteCell(iClientID);
+					g_hDatabase.Query(SQL_Callback_ChangeClientSettings, szQuery, hPack);
 				}
 			}
 
@@ -499,19 +507,32 @@ public int Native_SetClientAccessTime(Handle hPlugin, int iNumParams)
 	return false;
 }
 
-public void SQL_Callback_ChangeClientSettings(Database hOwner, DBResultSet hResult, const char[] szError, any iClient)
+public void SQL_Callback_ChangeClientSettings(Database hOwner, DBResultSet hResult, const char[] szError, DataPack hPack)
 {
 	DBG_SQL_Response("SQL_Callback_SelectVipClientInfo");
-	if (szError[0])
+
+	hPack.Reset();
+	int iClient = CID(hPack.ReadCell());
+	int iClientID = hPack.ReadCell();
+	delete hPack;
+
+	if (hResult == null || szError[0])
 	{
 		LogError("SQL_Callback_ChangeClientSettings: %s", szError);
+		return;
 	}
 
 	DBG_SQL_Response("hResult.AffectedRows = %d", hResult.AffectedRows);
 
-	if ((iClient = CID(iClient)) && hResult.AffectedRows)
+	if (hResult.AffectedRows)
 	{
-		Clients_CheckVipAccess(iClient, false);
+		// The row changed: drop the cached copy so the reload reads it from the database
+		DB_RemoveVIPFromCache(iClientID);
+
+		if (iClient)
+		{
+			Clients_CheckVipAccess(iClient, false);
+		}
 	}
 }
 

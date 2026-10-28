@@ -456,10 +456,13 @@ public int MenuHandler_TimeMenu(Menu hMenu, MenuAction action, int iClient, int 
 			g_hClientData[iClient].GetValue(DATA_KEY_TargetID, iTarget);
 			g_hClientData[iClient].SetValue(DATA_KEY_Time, iExpires);
 
-			char szQuery[512];
-			FormatEx(SZF(szQuery), "UPDATE `vip_users` SET `expires` = '%d' WHERE `account_id` = '%d'%s;", iExpires, iTarget, g_szSID);
-			DBG_SQL_Query(szQuery);
-			g_hDatabase.Query(SQL_Callback_ChangeTime, szQuery, UID(iClient));
+			if (g_hDatabase)
+			{
+				char szQuery[512];
+				FormatEx(SZF(szQuery), "UPDATE `vip_users` SET `expires` = '%d' WHERE `account_id` = '%d'%s;", iExpires, iTarget, g_szSID);
+				DBG_SQL_Query(szQuery);
+				g_hDatabase.Query(SQL_Callback_ChangeTime, szQuery, iTarget);
+			}
 
 			ShowTargetInfoMenu(iClient);
 		}
@@ -561,25 +564,24 @@ public int MenuHandler_GroupsList(Menu hMenu, MenuAction action, int iClient, in
 					g_hClientData[iClient].GetString(DATA_KEY_Name, SZF(szName));
 					g_hClientData[iClient].GetString(DATA_KEY_Group, SZF(szOldGroup));
 
-					FormatEx(SZF(szQuery), "UPDATE `vip_users` SET `group` = '%s' WHERE `account_id` = %d%s;", szGroup, iTargetID, g_szSID);
+					if (!g_hDatabase)
+					{
+						return 0;
+					}
 
-					DBG_SQL_Query(szQuery);
-					g_hDatabase.Query(SQL_Callback_ErrorCheck, szQuery);
+					g_hDatabase.Format(SZF(szQuery), "UPDATE `vip_users` SET `group` = '%s' WHERE `account_id` = %d%s;", szGroup, iTargetID, g_szSID);
 
 					int iTarget = 0;
 					g_hClientData[iClient].GetValue(DATA_KEY_TargetUID, iTarget);
-					iTarget = CID(iTarget);
-					if (!iTarget)
-					{
-						iTarget = IsClientOnline(iTargetID);
-					}
 
-					if (iTarget)
-					{
-						ResetClient(iTarget);
-						CreateForward_OnVIPClientRemoved(iTarget, "VIP-Group Changed", iClient);
-						Clients_CheckVipAccess(iTarget, false);
-					}
+					// Reload the target once the UPDATE is done, not before
+					DataPack hPack = new DataPack();
+					hPack.WriteCell(UID(iClient));
+					hPack.WriteCell(iTarget);
+					hPack.WriteCell(iTargetID);
+
+					DBG_SQL_Query(szQuery);
+					g_hDatabase.Query(SQL_Callback_ChangeGroup, szQuery, hPack);
 	
 					VIP_PrintToChatClient(iClient, "%t", "ADMIN_SET_GROUP", szName, szGroup);
 					if (g_CVAR_bLogsEnable)
@@ -599,7 +601,39 @@ public int MenuHandler_GroupsList(Menu hMenu, MenuAction action, int iClient, in
 	return 0;
 }
 
-public void SQL_Callback_ChangeTime(Database hOwner, DBResultSet hResult, const char[] szError, any UserID)
+public void SQL_Callback_ChangeGroup(Database hOwner, DBResultSet hResult, const char[] szError, DataPack hPack)
+{
+	DBG_SQL_Response("SQL_Callback_ChangeGroup")
+
+	hPack.Reset();
+	int iClient = CID(hPack.ReadCell());
+	int iTarget = CID(hPack.ReadCell());
+	int iTargetID = hPack.ReadCell();
+	delete hPack;
+
+	if (szError[0])
+	{
+		LogError("SQL_Callback_ChangeGroup: %s", szError);
+		return;
+	}
+
+	// The row changed: drop the cached copy so the reload reads it from the database
+	DB_RemoveVIPFromCache(iTargetID);
+
+	if (!iTarget)
+	{
+		iTarget = IsClientOnline(iTargetID);
+	}
+
+	if (iTarget)
+	{
+		ResetClient(iTarget);
+		CreateForward_OnVIPClientRemoved(iTarget, "VIP-Group Changed", iClient);
+		Clients_CheckVipAccess(iTarget, false);
+	}
+}
+
+public void SQL_Callback_ChangeTime(Database hOwner, DBResultSet hResult, const char[] szError, any iTargetID)
 {
 	DBG_SQL_Response("SQL_Callback_ChangeTime")
 	if (szError[0])
@@ -612,22 +646,14 @@ public void SQL_Callback_ChangeTime(Database hOwner, DBResultSet hResult, const 
 
 	if (hResult.AffectedRows)
 	{
-		int iClient = CID(UserID);
-		if (iClient)
-		{
-			int iTarget;
-			g_hClientData[iClient].GetValue(DATA_KEY_TargetUID, iTarget);
-			iTarget = CID(iTarget);
-			if(!iTarget)
-			{
-				g_hClientData[iClient].GetValue(DATA_KEY_TargetID, iTarget);
-				iTarget = IsClientOnline(iTarget);
-			}
+		// The row changed: drop the cached copy so the reload reads it from the database
+		DB_RemoveVIPFromCache(iTargetID);
 
-			if (iTarget)
-			{
-				Clients_CheckVipAccess(iTarget, true);
-			}
+		// Resolve the target by account id: the admin may have left or opened another player since
+		int iTarget = IsClientOnline(iTargetID);
+		if (iTarget)
+		{
+			Clients_CheckVipAccess(iTarget, true);
 		}
 	}
 }

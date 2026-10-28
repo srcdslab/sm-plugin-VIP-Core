@@ -75,8 +75,8 @@ void Clients_LoadClient(int iClient, bool bNotify)
 		return;
 	}
 
-	// If not in cache, query database
-	Clients_LoadClientFromDB(iClient, iAccountID, bNotify, false);
+	// If not in cache, query database (and cache the row it returns)
+	Clients_LoadClientFromDB(iClient, iAccountID, bNotify, true);
 }
 
 void Clients_LoadClientFromDB(int iClient, int iAccountID, bool bNotify, bool bUpdateCache)
