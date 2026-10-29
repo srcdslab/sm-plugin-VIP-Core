@@ -522,6 +522,9 @@ public void SQL_Callback_OnVIPClientAdded(Database hOwner, DBResultSet hResult, 
 		return;
 	}
 
+	// The row changed: drop the cached copy so the reload reads it from the database
+	DB_RemoveVIPFromCache(iAccountID);
+
 	if (iTarget > 0)
 	{
 		Clients_CheckVipAccess(iTarget, true);

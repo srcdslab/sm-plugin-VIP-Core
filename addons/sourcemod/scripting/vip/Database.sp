@@ -4,6 +4,8 @@
 //#define  CHARSET "utf8"
 //#define  COLLATION "utf8_unicode_ci"
 
+int g_iDBConnectRetries;
+
 void DB_OnPluginStart()
 {
 	DB_Connect();
@@ -43,12 +45,25 @@ public void OnDBConnect(Database hDatabase, const char[] szError, any data)
 {
 	if (hDatabase == null || szError[0])
 	{
-		SetFailState("OnDBConnect %s", szError);
+		delete hDatabase;
+		g_hDatabase = null;
 		UNSET_BIT(GLOBAL_INFO, IS_MySQL);
-	//	CreateTimer(5.0, Timer_DB_Reconnect);
+		UNSET_BIT(GLOBAL_INFO, IS_LOADING);
+
+		// Retry with a backoff: 5s, 10s, 20s, ... up to 2 minutes
+		float fDelay = 5.0 * float(1 << (g_iDBConnectRetries < 5 ? g_iDBConnectRetries : 5));
+		if (fDelay > 120.0)
+		{
+			fDelay = 120.0;
+		}
+		g_iDBConnectRetries++;
+
+		LogError("OnDBConnect: %s (retrying in %.0f seconds)", szError, fDelay);
+		CreateTimer(fDelay, Timer_DB_Reconnect);
 		return;
 	}
 
+	g_iDBConnectRetries = 0;
 	g_hDatabase = hDatabase;
 
 	if (data == 1)
@@ -63,6 +78,12 @@ public void OnDBConnect(Database hDatabase, const char[] szError, any data)
 		if (strcmp(szDriver, "mysql", false) == 0)
 		{
 			SET_BIT(GLOBAL_INFO, IS_MySQL);
+
+			// Once per connection, before any query: the driver keeps it across auto-reconnects
+			if (!g_hDatabase.SetCharset(CHARSET))
+			{
+				g_hDatabase.Query(SQL_Callback_ErrorCheck, "SET NAMES '" ... CHARSET ... "'", _, DBPrio_High);
+			}
 		}
 		else
 		{
@@ -73,6 +94,12 @@ public void OnDBConnect(Database hDatabase, const char[] szError, any data)
 	DBG_Database("OnDBConnect %x, %u - > (MySQL: %b)", g_hDatabase, g_hDatabase, GLOBAL_INFO & IS_MySQL);
 
 	CreateTables();
+}
+
+public Action Timer_DB_Reconnect(Handle hTimer)
+{
+	DB_Connect();
+	return Plugin_Stop;
 }
 
 void CreateTables()
@@ -93,8 +120,14 @@ void CreateTables()
 					`sid` INT UNSIGNED NOT NULL, \
 					`group` VARCHAR(64) NOT NULL, \
 					`expires` INT UNSIGNED NOT NULL default 0, \
-					CONSTRAINT pk_PlayerID PRIMARY KEY (`account_id`, `sid`) \
+					CONSTRAINT pk_PlayerID PRIMARY KEY (`account_id`, `sid`), \
+					KEY `expires` (`expires`), \
+					KEY `lastvisit` (`lastvisit`) \
 					) DEFAULT CHARSET=" ... CHARSET ... ";", _, DBPrio_High);
+
+		// Existing installs: add the indexes used by the expired/outdated cleanup (error 1061 = already there)
+		g_hDatabase.Query(SQL_Callback_AddIndex, "ALTER TABLE `vip_users` ADD INDEX `expires` (`expires`);", _, DBPrio_High);
+		g_hDatabase.Query(SQL_Callback_AddIndex, "ALTER TABLE `vip_users` ADD INDEX `lastvisit` (`lastvisit`);", _, DBPrio_High);
 	}
 	else
 	{
@@ -105,6 +138,18 @@ void CreateTables()
 				`lastvisit` INTEGER UNSIGNED NOT NULL default 0, \
 				`group` VARCHAR(64) NOT NULL, \
 				`expires` INTEGER UNSIGNED NOT NULL default 0);", _, DBPrio_High);
+
+		g_hDatabase.Query(SQL_Callback_AddIndex, "CREATE INDEX IF NOT EXISTS `vip_users_expires` ON `vip_users` (`expires`);", _, DBPrio_High);
+		g_hDatabase.Query(SQL_Callback_AddIndex, "CREATE INDEX IF NOT EXISTS `vip_users_lastvisit` ON `vip_users` (`lastvisit`);", _, DBPrio_High);
+	}
+}
+
+public void SQL_Callback_AddIndex(Database hOwner, DBResultSet hResult, const char[] szError, any data)
+{
+	// 1061: Duplicate key name, the index already exists
+	if (szError[0] && StrContains(szError, "Duplicate key name", false) == -1)
+	{
+		LogError("SQL_Callback_AddIndex: %s", szError);
 	}
 }
 
@@ -116,14 +161,6 @@ public void SQL_Callback_TableCreate(Database hOwner, DBResultSet hResult, const
 	{
 		SetFailState("SQL_Callback_TableCreate: %s", szError);
 		return;
-	}
-
-	if (GLOBAL_INFO & IS_MySQL)
-	{
-		g_hDatabase.Query(SQL_Callback_ErrorCheck, "SET NAMES '" ... CHARSET ... "'", _, DBPrio_High);
-		g_hDatabase.Query(SQL_Callback_ErrorCheck, "SET CHARSET '" ... CHARSET ... "'", _, DBPrio_High);
-
-		g_hDatabase.SetCharset(CHARSET);
 	}
 
 	UNSET_BIT(GLOBAL_INFO, IS_LOADING);
@@ -147,6 +184,11 @@ public void SQL_Callback_TableCreate(Database hOwner, DBResultSet hResult, const
 
 void RemoveExpAndOutPlayers()
 {
+	if (!g_hDatabase)
+	{
+		return;
+	}
+
 	if (g_CVAR_iDeleteExpired >= 0)
 	{
 		char szQuery[256];
@@ -195,7 +237,7 @@ void DB_UpdateClient(int iClient, const char[] szDbName = NULL_STRING)
 	}
 
 	DBG_SQL_Query(szQuery);
-	g_hDatabase.Query(SQL_Callback_ErrorCheck, szQuery, DBPrio_Low);
+	g_hDatabase.Query(SQL_Callback_ErrorCheck, szQuery, _, DBPrio_Low);
 }
 
 void DB_RemoveClientFromID(int iAdmin = 0,
@@ -310,7 +352,10 @@ public void SQL_Callback_SelectRemoveClient(Database hOwner, DBResultSet hResult
 		hPack.WriteString(szName);
 
 		DB_RemoveClient(hPack, iClientID);
+		return;
 	}
+
+	delete hPack;
 }
 
 void DB_RemoveClient(DataPack hDataPack, int iClientID)
@@ -333,9 +378,14 @@ public void SQL_Callback_RemoveClient(Database hOwner, DBResultSet hResult, cons
 		return;
 	}
 
-	DBG_SQL_Response("hResult.AffectedRows = %d", hResult.AffectedRows);
+	DB_OnClientRemoved(hPack, hResult.AffectedRows);
+}
 
-	if (hResult.AffectedRows)
+void DB_OnClientRemoved(DataPack hPack, int iAffectedRows)
+{
+	DBG_SQL_Response("hResult.AffectedRows = %d", iAffectedRows);
+
+	if (iAffectedRows)
 	{
 		hPack.Reset();
 
@@ -347,11 +397,7 @@ public void SQL_Callback_RemoveClient(Database hOwner, DBResultSet hResult, cons
 		hPack.ReadString(SZF(szName));
 		hPack.ReadString(SZF(szGroup));
 
-		if(iAdmin == -1)
-		{
-			return;
-		}
-
+		// iAdmin is -1 when the admin left: still log and update the cache, only skip the reply
 		if (g_CVAR_bLogsEnable)
 		{
 			LogToFile(g_szLogFile, "%T", "LOG_VIP_DELETED", LANG_SERVER, szName, iClientID, szGroup, szAdmin);
@@ -383,8 +429,12 @@ public void SQL_Callback_SelectExpiredAndOutdated(Database hOwner, DBResultSet h
 
 	if (hResult.RowCount)
 	{
+		// Delete every expired/outdated row in a single transaction instead of one query per row
 		int iClientID;
-		char szName[MNL*2], szGroup[64];
+		char szName[MNL*2], szGroup[64], szAdmin[PMP], szQuery[256];
+		FormatEx(SZF(szAdmin), "%T", iReason == REASON_EXPIRED ? "REASON_EXPIRED":"REASON_INACTIVITY", LANG_SERVER);
+
+		Transaction hTxn = new Transaction();
 		while (hResult.FetchRow())
 		{
 			DBG_SQL_Response("hResult.FetchRow()");
@@ -394,8 +444,43 @@ public void SQL_Callback_SelectExpiredAndOutdated(Database hOwner, DBResultSet h
 			DBG_SQL_Response("hResult.FetchString(1) = '%s'", szName);
 			hResult.FetchString(2, SZF(szGroup));
 			DBG_SQL_Response("hResult.FetchString(2) = '%s'", szGroup);
-			DB_RemoveClientFromID(iReason, _, iClientID, false, szName, szGroup);
+
+			// Same layout as the DataPack built by DB_RemoveClientFromID
+			DataPack hPack = new DataPack();
+			hPack.WriteCell(iClientID);
+			hPack.WriteCell(iReason);
+			hPack.WriteCell(false);
+			hPack.WriteString(szAdmin);
+			hPack.WriteString(szName);
+			hPack.WriteString(szGroup);
+
+			FormatEx(SZF(szQuery), "DELETE FROM `vip_users` WHERE `account_id` = %d%s;", iClientID, g_szSID);
+			DBG_SQL_Query(szQuery);
+			hTxn.AddQuery(szQuery, hPack);
 		}
+
+		g_hDatabase.Execute(hTxn, SQL_TxnCallback_RemoveClients, SQL_TxnCallback_RemoveClientsFailure, _, DBPrio_Low);
+	}
+}
+
+public void SQL_TxnCallback_RemoveClients(Database hOwner, any data, int iNumQueries, DBResultSet[] hResults, any[] hQueryData)
+{
+	DBG_SQL_Response("SQL_TxnCallback_RemoveClients");
+
+	for (int i = 0; i < iNumQueries; ++i)
+	{
+		DB_OnClientRemoved(view_as<DataPack>(hQueryData[i]), hResults[i].AffectedRows);
+	}
+}
+
+public void SQL_TxnCallback_RemoveClientsFailure(Database hOwner, any data, int iNumQueries, const char[] szError, int iFailIndex, any[] hQueryData)
+{
+	LogError("SQL_TxnCallback_RemoveClientsFailure: %s", szError);
+
+	for (int i = 0; i < iNumQueries; ++i)
+	{
+		DataPack hPack = view_as<DataPack>(hQueryData[i]);
+		delete hPack;
 	}
 }
 
@@ -427,7 +512,8 @@ void DB_LoadAllVIPsToCache()
 		#endif
 	}
 
-	FormatEx(SZF(szQuery), "SELECT `account_id`, `expires`, `group`, `name` FROM `vip_users` WHERE 1=1%s;", szWhere);
+	// Expired VIPs are not cached anyway, so do not fetch them
+	FormatEx(SZF(szQuery), "SELECT `account_id`, `expires`, `group`, `name` FROM `vip_users` WHERE (`expires` = 0 OR `expires` > %d)%s;", GetTime(), szWhere);
 
 	DBG_SQL_Query(szQuery);
 	g_hDatabase.Query(SQL_Callback_LoadAllVIPsToCache, szQuery, _, DBPrio_High);
