@@ -305,7 +305,8 @@ public void SQL_Callback_SelectVipPlayers(Database hOwner, DBResultSet hResult, 
 		if (hResult.RowCount == LIST_OFFSET)
 		{
 			hMenu.AddItem(NULL_STRING, "ITEMDRAW_SPACER", ITEMDRAW_SPACER);
-			hMenu.AddItem("more", "Показать еще");
+			FormatEx(SZF(szName), "%T", "SHOW_MORE", iClient);
+			hMenu.AddItem("more", szName);
 		}
 
 		hMenu.Display(iClient, MENU_TIME_FOREVER);
