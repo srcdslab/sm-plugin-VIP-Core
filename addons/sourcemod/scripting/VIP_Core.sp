@@ -7,7 +7,7 @@
 #include <clientprefs>
 
 #if !defined VIP_VERSION
-#define VIP_VERSION		"3.1.6 R"
+#define VIP_VERSION		"3.1.7 R"
 #endif
 
 
