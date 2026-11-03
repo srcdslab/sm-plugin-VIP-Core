@@ -59,7 +59,7 @@ public Action AddVIP_CMD(int iClient, int iArgs)
 {
 	if (iArgs != 3)
 	{
-		ReplyToCommand(iClient, "[VIP] %t!\nSyntax: sm_addvip <#steam_id|#name|#userid> <group> <time>", "INCORRECT_USAGE");
+		ReplyToCommand(iClient, "[VIP] %t!\n%t sm_addvip <#steam_id|#name|#userid> <group> <time>", "INCORRECT_USAGE", "USE");
 		return Plugin_Handled;
 	}
 	
@@ -126,7 +126,7 @@ public Action SetVIP_CMD(int iClient, int iArgs)
 {
 	if (iArgs != 3)
 	{
-		ReplyToCommand(iClient, "[VIP] %t!\nSyntax: sm_setvip <#steam_id|#name|#userid> <group> <time>", "INCORRECT_USAGE");
+		ReplyToCommand(iClient, "[VIP] %t!\n%t sm_setvip <#steam_id|#name|#userid> <group> <time>", "INCORRECT_USAGE", "USE");
 		return Plugin_Handled;
 	}
 	
@@ -193,7 +193,7 @@ public Action DelVIP_CMD(int iClient, int iArgs)
 {
 	if (iArgs != 1)
 	{
-		ReplyToCommand(iClient, "%t!\nSyntax: sm_delvip <identity>", "INCORRECT_USAGE");
+		ReplyToCommand(iClient, "%t!\n%t sm_delvip <identity>", "INCORRECT_USAGE", "USE");
 		return Plugin_Handled;
 	}
 	
