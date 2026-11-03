@@ -395,12 +395,24 @@ public int MenuHandler_TimeMenu(Menu hMenu, MenuAction action, int iClient, int 
 						iExpires = GetTime() + iTime;
 					}
 
-					FormatTime(SZF(szTime), "%d/%m/%Y - %H:%M", iExpires);
-					VIP_PrintToChatClient(iClient, "%t", "ADMIN_SET_EXPIRATION", szName, szTime);
-					
-					if (g_CVAR_bLogsEnable)
+					if (iExpires)
 					{
-						LogToFile(g_szLogFile, "%T", "LOG_ADMIN_SET_EXPIRATION", LANG_SERVER, iClient, szName, szTime);
+						FormatTime(SZF(szTime), "%d/%m/%Y - %H:%M", iExpires);
+						VIP_PrintToChatClient(iClient, "%t", "ADMIN_SET_EXPIRATION", szName, szTime);
+						
+						if (g_CVAR_bLogsEnable)
+						{
+							LogToFile(g_szLogFile, "%T", "LOG_ADMIN_SET_EXPIRATION", LANG_SERVER, iClient, szName, szTime);
+						}
+					}
+					else
+					{
+						VIP_PrintToChatClient(iClient, "%t", "ADMIN_SET_PERMANENT", szName);
+						
+						if (g_CVAR_bLogsEnable)
+						{
+							LogToFile(g_szLogFile, "%T", "LOG_ADMIN_SET_PERMANENT", LANG_SERVER, iClient, szName);
+						}
 					}
 				}
 				case TIME_ADD:
