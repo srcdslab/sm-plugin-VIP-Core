@@ -299,28 +299,6 @@
 		"ua"		"Адмін {1} встановив тривалість VIP гравцю {2} до {3}"
 		"chi"		"管理员 {1} 将 {2} 的 VIP 到期时间设置为 {3}"
 	}
-	"ADMIN_SET_PERMANENT"
-	{
-		"#format"	"{1:s}"
-		"en"		"{1}'s VIP-status was set to permanent"
-		"de"		"Der VIP-Status von {1} wurde auf permanent gesetzt"
-		"fr"		"Le VIP de {1} est désormais permanent"
-		"pt"		"O VIP de {1} agora é permanente"
-		"ru"		"VIP-статус игрока {1} теперь бессрочный"
-		"es"		"El VIP de {1} ahora es permanente"
-		"chi"		"{1} 的 VIP 已设置为永久"
-	}
-	"LOG_ADMIN_SET_PERMANENT"
-	{
-		"#format"	"{1:L},{2:s}"
-		"en"		"Admin {1} has set {2}'s VIP-status to permanent"
-		"de"		"Admin {1} hat den VIP-Status von {2} auf permanent gesetzt"
-		"fr"		"L'admin {1} a rendu le VIP de {2} permanent"
-		"pt"		"Administrador {1} tornou o VIP de {2} permanente"
-		"ru"		"Админ {1} сделал VIP-статус игрока {2} бессрочным"
-		"es"		"El admin {1} ha hecho permanente el VIP de {2}"
-		"chi"		"管理员 {1} 将 {2} 的 VIP 设置为永久"
-	}
 	"MENU_TIME_ADD"
 	{
 		"en"		"Add Time"
@@ -960,16 +938,6 @@
 		"es"		"Sintaxis: sm_delvip <vip-id>"
 		"ua"		"Використовуйте: sm_delvip <ідентифікатор>"
 		"chi"		"用法：sm_delvip <vip-id>"
-	}
-	"VIP_PLAYER_NOT_FOUND"
-	{
-		"en"		"VIP player not found!"
-		"de"		"VIP-Spieler nicht gefunden!"
-		"fr"		"Joueur VIP introuvable!"
-		"pt"		"Jogador VIP não encontrado!"
-		"ru"		"VIP-игрок не найден!"
-		"es"		"¡Jugador VIP no encontrado!"
-		"chi"		"未找到该 VIP 玩家！"
 	}
 	"INCORRECT_USAGE"
 	{

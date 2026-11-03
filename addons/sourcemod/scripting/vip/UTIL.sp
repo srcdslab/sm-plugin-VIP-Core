@@ -553,12 +553,11 @@ public void SQL_Callback_OnVIPClientAdded(Database hOwner, DBResultSet hResult, 
 	{
 		if (iDuration)
 		{
-			UTIL_GetTimeFromStamp(SZF(szDuration), iDuration, LANG_SERVER);
-			FormatTime(SZF(szExpires), "%d/%m/%Y - %H:%M", iExpires);
+			UTIL_GetTimeFromStamp(SZF(szExpires), iDuration, LANG_SERVER);
 		}
 		else
 		{
-			FormatEx(SZF(szDuration), "%T", "PERMANENT", LANG_SERVER);
+			FormatEx(SZF(szExpires), "%T", "PERMANENT", LANG_SERVER);
 			FormatEx(SZF(szExpires), "%T", "NEVER", LANG_SERVER);
 		}
 		LogToFile(g_szLogFile, "%T", "LOG_VIP_ADDED", LANG_SERVER, szTargetInfo, iAccountID, szDuration, szExpires, szGroup, szAdmin);

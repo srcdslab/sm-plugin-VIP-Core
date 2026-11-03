@@ -251,7 +251,7 @@ public void SQL_Callback_OnSelectRemoveClient(Database hOwner, DBResultSet hResu
 	}
 	else
 	{
-		ReplyToCommand(iClient, "%t", "VIP_PLAYER_NOT_FOUND");
+		ReplyToCommand(iClient, "%t", "FIND_THE_ID_FAIL");
 	}
 }
 
