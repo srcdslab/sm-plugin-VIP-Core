@@ -1042,9 +1042,13 @@
 		"en"		"Show more"
 		"de"		"Mehr anzeigen"
 		"fr"		"Afficher plus"
+		"fi"		"Näytä lisää"
+		"lv"		"Rādīt vairāk"
 		"pt"		"Mostrar mais"
+		"pt_p"		"Mostrar mais"
 		"ru"		"Показать ещё"
 		"es"		"Mostrar más"
+		"ua"		"Показати ще"
 		"chi"		"显示更多"
 	}
 	"y."
