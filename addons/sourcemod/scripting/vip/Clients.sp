@@ -170,7 +170,7 @@ void Clients_ProcessVIPData(int iClient, int iAccountID, bool bNotify, int iExpi
 	}
 	else
 	{
-		LogError("Invalid VIP-Group/Некорректная VIP-группа: %s (Игрок: %d)", szGroup, iAccountID);
+		LogError("Invalid VIP-Group: %s (Player: %d)", szGroup, iAccountID);
 		CreateForward_OnClientLoaded(iClient);
 	}
 }
