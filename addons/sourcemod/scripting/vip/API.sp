@@ -448,7 +448,7 @@ public int Native_SetClientVIPGroup(Handle hPlugin, int iNumParams)
 		}
 		else
 		{
-			ThrowNativeError(SP_ERROR_NATIVE, "Invalid group/Некорректная VIP-группа (%s)", szGroup);
+			ThrowNativeError(SP_ERROR_NATIVE, "Invalid group (%s)", szGroup);
 		}
 	}
 	return false;
@@ -478,7 +478,7 @@ public int Native_SetClientAccessTime(Handle hPlugin, int iNumParams)
 
 		if (iTime < 0 || (iTime != 0 && iTime < GetTime()))
 		{
-			ThrowNativeError(SP_ERROR_NATIVE, "Invalid time/Некорректное время (%i)", iTime);
+			ThrowNativeError(SP_ERROR_NATIVE, "Invalid time (%i)", iTime);
 			return false;
 		}
 
@@ -615,17 +615,17 @@ int API_GiveClientVIP(Handle hPlugin, int iAdmin, int iClient, int iTime, const 
 			}
 			else
 			{
-				return ThrowNativeError(SP_ERROR_NATIVE, "The player %L is already a VIP/Игрок %L уже является VIP-игроком", iClient, iClient);
+				return ThrowNativeError(SP_ERROR_NATIVE, "The player %L is already a VIP", iClient);
 			}
 		}
 
 		if (!UTIL_CheckValidVIPGroup(szGroup))
 		{
-			return ThrowNativeError(SP_ERROR_NATIVE, "Invalid VIP-group/Некорректная VIP-группа (%s)", szGroup);
+			return ThrowNativeError(SP_ERROR_NATIVE, "Invalid VIP-group (%s)", szGroup);
 		}
 		if (iTime < 0)
 		{
-			return ThrowNativeError(SP_ERROR_NATIVE, "Invalid time/Некорректное время (%d)", iTime);
+			return ThrowNativeError(SP_ERROR_NATIVE, "Invalid time (%d)", iTime);
 		}
 
 		if (bAddToDB)
@@ -851,7 +851,7 @@ public int Native_UnregisterFeature(Handle hPlugin, int iNumParams)
 	}
 	else
 	{
-		ThrowNativeError(SP_ERROR_NATIVE, "Feature \"%s\" is invalid/Функция \"%s\" не существует", szFeature, szFeature);
+		ThrowNativeError(SP_ERROR_NATIVE, "Feature \"%s\" is invalid", szFeature);
 	}
 
 	return 0;
@@ -956,7 +956,7 @@ public int Native_GetFeatureType(Handle hPlugin, int iNumParams)
 		return hArray.Get(FEATURES_ITEM_TYPE);
 	}
 
-	return ThrowNativeError(SP_ERROR_NATIVE, "Feature \"%s\" is invalid/Функция \"%s\" не существует", szFeature, szFeature);
+	return ThrowNativeError(SP_ERROR_NATIVE, "Feature \"%s\" is invalid", szFeature);
 }
 
 public int Native_GetFeatureValueType(Handle hPlugin, int iNumParams)
@@ -970,7 +970,7 @@ public int Native_GetFeatureValueType(Handle hPlugin, int iNumParams)
 		return hArray.Get(FEATURES_VALUE_TYPE);
 	}
 
-	return ThrowNativeError(SP_ERROR_NATIVE, "Feature \"%s\" is invalid/Функция \"%s\" не существует", szFeature, szFeature);
+	return ThrowNativeError(SP_ERROR_NATIVE, "Feature \"%s\" is invalid", szFeature);
 }
 
 public int Native_FillArrayByFeatures(Handle hPlugin, int iNumParams)
@@ -1145,7 +1145,7 @@ public int Native_GiveClientFeature(Handle hPlugin, int iNumParams)
 		ArrayList hArray;
 		if (!IsValidFeature(szFeature) || !GLOBAL_TRIE.GetValue(szFeature, hArray))
 		{
-			ThrowNativeError(SP_ERROR_NATIVE, "Feature \"%s\" is invalid/Функция \"%s\" не существует", szFeature, szFeature);
+			ThrowNativeError(SP_ERROR_NATIVE, "Feature \"%s\" is invalid", szFeature);
 			return 0;
 		}
 
@@ -1210,7 +1210,7 @@ public int Native_RemoveClientFeature(Handle hPlugin, int iNumParams)
 		ArrayList hArray;
 		if (!IsValidFeature(szFeature) || !GLOBAL_TRIE.GetValue(szFeature, hArray))
 		{
-			ThrowNativeError(SP_ERROR_NATIVE, "Feature \"%s\" is invalid/Функция \"%s\" не существует", szFeature, szFeature);
+			ThrowNativeError(SP_ERROR_NATIVE, "Feature \"%s\" is invalid", szFeature);
 			return 0;
 		}
 
@@ -1287,7 +1287,7 @@ public int Native_AddStringToggleStatus(Handle hPlugin, int iNumParams)
 	GetNativeString(4, SZF(szFeature));
 	if (!IsValidFeature(szFeature))
 	{
-		return ThrowNativeError(SP_ERROR_NATIVE, "Feature \"%s\" is invalid/Функция \"%s\" не существует", szFeature, szFeature);
+		return ThrowNativeError(SP_ERROR_NATIVE, "Feature \"%s\" is invalid", szFeature);
 	}
 
 	int iClient = GetNativeCell(5);
@@ -1307,12 +1307,12 @@ bool CheckValidClient(const int &iClient, bool bCheckVIP = true)
 {
 	if (iClient < 1 || iClient > MaxClients)
 	{
-		ThrowNativeError(SP_ERROR_NATIVE, "Invalid client index/Некорректный индекс игрока (%i)", iClient);
+		ThrowNativeError(SP_ERROR_NATIVE, "Invalid client index (%i)", iClient);
 		return false;
 	}
 	if (IsClientInGame(iClient) == false)
 	{
-		ThrowNativeError(SP_ERROR_NATIVE, "Client %i is not connected/Игрок %i не подключен", iClient, iClient);
+		ThrowNativeError(SP_ERROR_NATIVE, "Client %i is not connected", iClient);
 		return false;
 	}
 	if (bCheckVIP)
