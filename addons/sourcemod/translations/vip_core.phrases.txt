@@ -13,6 +13,11 @@
 		"es"		"{DEFAULT}[ {GREEN}VIP {DEFAULT}]"
 		"ua"		"{DEFAULT}[ {GREEN}VIP {DEFAULT}]"
 		"chi"		"{DEFAULT}[ {GREEN}VIP {DEFAULT}]"
+		"pl"		"{DEFAULT}[ {GREEN}VIP {DEFAULT}]"
+		"tr"		"{DEFAULT}[ {GREEN}VIP {DEFAULT}]"
+		"it"		"{DEFAULT}[ {GREEN}VIP {DEFAULT}]"
+		"zho"		"{DEFAULT}[ {GREEN}VIP {DEFAULT}]"
+		"cze"		"{DEFAULT}[ {GREEN}VIP {DEFAULT}]"
 	}
 	"VIP_MENU_TITLE"
 	{
@@ -27,6 +32,11 @@
 		"es"		"| MENÚ VIP |"
 		"ua"		"| VIP МЕНЮ |"
 		"chi"		"| VIP 菜单 |"
+		"pl"		"| MENU VIP |"
+		"tr"		"| VIP MENÜSÜ |"
+		"it"		"| MENU VIP |"
+		"zho"		"| VIP 選單 |"
+		"cze"		"| VIP MENU |"
 	}
 	"EXPIRES_IN"
 	{
@@ -41,6 +51,11 @@
 		"es"		"Expira en"
 		"ua"		"Закінчується через"
 		"chi"		"剩余时间"
+		"pl"		"Wygasa za"
+		"tr"		"Bitiş süresi"
+		"it"		"Scade tra"
+		"zho"		"到期時間"
+		"cze"		"Vyprší za"
 	}
 	"DISABLED"
 	{
@@ -55,6 +70,11 @@
 		"es"		"Desactivado"
 		"ua"		"Вимкнено"
 		"chi"		"已禁用"
+		"pl"		"Wyłączone"
+		"tr"		"Devre dışı"
+		"it"		"Disattivato"
+		"zho"		"已停用"
+		"cze"		"Vypnuto"
 	}
 	"ENABLED"
 	{
@@ -69,6 +89,11 @@
 		"es"		"Activado"
 		"ua"		"Увімкнено"
 		"chi"		"已启用"
+		"pl"		"Włączone"
+		"tr"		"Etkin"
+		"it"		"Attivato"
+		"zho"		"已啟用"
+		"cze"		"Zapnuto"
 	}
 	"NO_ACCESS"
 	{
@@ -83,6 +108,11 @@
 		"es"		"Sin acceso"
 		"ua"		"Немає доступу"
 		"chi"		"无权限"
+		"pl"		"Brak dostępu"
+		"tr"		"Erişim yok"
+		"it"		"Nessun accesso"
+		"zho"		"無權限"
+		"cze"		"Bez přístupu"
 	}
 	"NO_FEATURES"
 	{
@@ -97,6 +127,11 @@
 		"es"		"¡No hay funciones disponibles!"
 		"ua"		"Немає доступних функцій!"
 		"chi"		"没有可用的功能！"
+		"pl"		"Brak dostępnych funkcji!"
+		"tr"		"Kullanılabilir özellik yok!"
+		"it"		"Nessuna funzione disponibile!"
+		"zho"		"沒有可用的功能!"
+		"cze"		"Žádné dostupné funkce!"
 	}
 	"COMMAND_NO_ACCESS"
 	{
@@ -111,6 +146,11 @@
 		"es"		"¡No tienes permiso para usar este comando!"
 		"ua"		"У вас немає прав для доступу до цієї команди!"
 		"chi"		"你没有权限使用此命令！"
+		"pl"		"Nie masz uprawnień do tej komendy!"
+		"tr"		"Bu komutu kullanma yetkin yok!"
+		"it"		"Non hai i permessi per usare questo comando!"
+		"zho"		"你沒有使用此指令的權限!"
+		"cze"		"K tomuto příkazu nemáš oprávnění!"
 	}
 	"NO_VIP_PLAYERS_ONLINE"
 	{
@@ -125,6 +165,11 @@
 		"es"		"No hay jugadores VIP en línea"
 		"ua"		"Немає VIP-гравців онлайн"
 		"chi"		"当前没有在线的 VIP 玩家"
+		"pl"		"Brak graczy VIP online"
+		"tr"		"Çevrimiçi VIP oyuncu yok"
+		"it"		"Nessun giocatore VIP online"
+		"zho"		"沒有線上的 VIP 玩家"
+		"cze"		"Žádní VIP hráči online"
 	}
 	"REMOVING_PLAYER"
 	{
@@ -140,6 +185,11 @@
 		"es"		"El VIP de {1} ha expirado, eliminando al jugador..."
 		"ua"		"Термін дії VIP гравця {1} закінчився, видалення гравця..."
 		"chi"		"{1} 的 VIP 已过期，正在移除该玩家..."
+		"pl"		"VIP gracza {1} wygasł, usuwanie gracza..."
+		"tr"		"{1} oyuncusunun VIP süresi doldu, oyuncu kaldırılıyor..."
+		"it"		"Il VIP di {1} è scaduto, rimozione del giocatore..."
+		"zho"		"{1} 的 VIP 已到期，正在移除玩家..."
+		"cze"		"VIP hráče {1} vypršelo, hráč se odebírá..."
 	}
 	"VIP_ADMIN_MENU_TITLE"
 	{
@@ -154,6 +204,11 @@
 		"es"		"Administrar sistema VIP"
 		"ua"		"Керування системою VIP"
 		"chi"		"管理 VIP 系统"
+		"pl"		"Zarządzanie systemem VIP"
+		"tr"		"VIP Sistemini Yönet"
+		"it"		"Gestione sistema VIP"
+		"zho"		"管理 VIP 系統"
+		"cze"		"Správa systému VIP"
 	}
 	"MENU_ADD_VIP"
 	{
@@ -168,6 +223,11 @@
 		"es"		"Añadir jugador VIP"
 		"ua"		"Додати VIP-гравця"
 		"chi"		"添加 VIP 玩家"
+		"pl"		"Dodaj gracza VIP"
+		"tr"		"VIP oyuncu ekle"
+		"it"		"Aggiungi giocatore VIP"
+		"zho"		"新增 VIP 玩家"
+		"cze"		"Přidat VIP hráče"
 	}
 	"PLAYER_NO_LONGER_AVAILABLE"
 	{
@@ -182,6 +242,11 @@
 		"es"		"El jugador ya no está disponible"
 		"ua"		"Гравець більше недоступний"
 		"chi"		"该玩家已不可用"
+		"pl"		"Gracz nie jest już dostępny"
+		"tr"		"Oyuncu artık mevcut değil"
+		"it"		"Il giocatore non è più disponibile"
+		"zho"		"該玩家已不在線上"
+		"cze"		"Hráč již není dostupný"
 	}
 	"ADMIN_VIP_ADD_SUCCESS"
 	{
@@ -197,6 +262,11 @@
 		"es"		"¡Jugador VIP {1} (ID: {2}) añadido correctamente!"
 		"ua"		"VIP-Гравець {1} (ID: {2}) успішно доданий!"
 		"chi"		"VIP 玩家 {1}（ID：{2}）添加成功！"
+		"pl"		"Gracz VIP {1} (ID: {2}) został dodany!"
+		"tr"		"VIP oyuncu {1} (ID: {2}) başarıyla eklendi!"
+		"it"		"Giocatore VIP {1} (ID: {2}) aggiunto con successo!"
+		"zho"		"VIP 玩家 {1} (ID: {2}) 已成功新增!"
+		"cze"		"VIP hráč {1} (ID: {2}) byl úspěšně přidán!"
 	}
 	"LOG_VIP_ADDED"
 	{
@@ -212,6 +282,11 @@
 		"es"		"Jugador VIP {1} (ID: {2}, Duración: {3}, Expira: {4}, Grupo: {5}) añadido {6}"
 		"ua"		"VIP-Гравець {1} (ID: {2}, Тривалість: {3}, Закінчується: {4}, Група: {5}) доданий {6}"
 		"chi"		"VIP 玩家 {1}（ID：{2}，时长：{3}，到期：{4}，组：{5}）已添加（{6}）"
+		"pl"		"Gracz VIP {1} (ID: {2}, Czas trwania: {3}, Wygasa: {4}, Grupa: {5}) dodany {6}"
+		"tr"		"VIP oyuncu {1} (ID: {2}, Süre: {3}, Bitiş: {4}, Grup: {5}) eklendi {6}"
+		"it"		"Giocatore VIP {1} (ID: {2}, Durata: {3}, Scadenza: {4}, Gruppo: {5}) aggiunto {6}"
+		"zho"		"VIP 玩家 {1} (ID: {2}, 期限: {3}, 到期: {4}, 群組: {5}) 已新增 {6}"
+		"cze"		"VIP hráč {1} (ID: {2}, Doba trvání: {3}, Vyprší: {4}, Skupina: {5}) přidán {6}"
 	}
 	"ADMIN_VIP_ADD_FAILED"
 	{
@@ -226,6 +301,11 @@
 		"es"		"¡Error al añadir el VIP-ID!"
 		"ua"		"Помилка створення VIP-гравця!"
 		"chi"		"添加 VIP-ID 失败！"
+		"pl"		"Nie udało się dodać VIP-ID!"
+		"tr"		"VIP-ID eklenemedi!"
+		"it"		"Impossibile aggiungere il VIP-ID!"
+		"zho"		"新增 VIP-ID 失敗!"
+		"cze"		"Přidání VIP-ID se nezdařilo!"
 	}
 	"MENU_EDIT_VIP"
 	{
@@ -240,6 +320,11 @@
 		"es"		"Editar jugador VIP"
 		"ua"		"Редагувати VIP-гравця"
 		"chi"		"编辑 VIP 玩家"
+		"pl"		"Edytuj gracza VIP"
+		"tr"		"VIP oyuncuyu düzenle"
+		"it"		"Modifica giocatore VIP"
+		"zho"		"編輯 VIP 玩家"
+		"cze"		"Upravit VIP hráče"
 	}
 	"MENU_EDIT_TIME"
 	{
@@ -254,6 +339,11 @@
 		"es"		"Editar tiempo"
 		"ua"		"Змінити термін"
 		"chi"		"编辑时间"
+		"pl"		"Edytuj czas"
+		"tr"		"Süreyi düzenle"
+		"it"		"Modifica durata"
+		"zho"		"編輯時間"
+		"cze"		"Upravit čas"
 	}
 	"MENU_TIME_SET"
 	{
@@ -268,6 +358,11 @@
 		"es"		"Establecer periodo"
 		"ua"		"Встановити термін"
 		"chi"		"设置期限"
+		"pl"		"Ustaw okres"
+		"tr"		"Süre belirle"
+		"it"		"Imposta periodo"
+		"zho"		"設定期限"
+		"cze"		"Nastavit období"
 	}
 	"ADMIN_SET_EXPIRATION"
 	{
@@ -283,6 +378,11 @@
 		"es"		"El VIP de {1} se ha establecido hasta el {2}"
 		"ua"		"Гравцю {1} встановлена тривалість VIP-статусу до {2}"
 		"chi"		"{1} 的 VIP 到期时间已设置为 {2}"
+		"pl"		"VIP gracza {1} wygaśnie {2}"
+		"tr"		"{1} oyuncusunun VIP durumu {2} tarihinde bitecek şekilde ayarlandı"
+		"it"		"Lo stato VIP di {1} scadrà il {2}"
+		"zho"		"{1} 的 VIP 狀態已設定為 {2} 到期"
+		"cze"		"VIP hráče {1} vyprší {2}"
 	}
 	"LOG_ADMIN_SET_EXPIRATION"
 	{
@@ -298,6 +398,11 @@
 		"es"		"El admin {1} ha establecido el VIP de {2} hasta el {3}"
 		"ua"		"Адмін {1} встановив тривалість VIP гравцю {2} до {3}"
 		"chi"		"管理员 {1} 将 {2} 的 VIP 到期时间设置为 {3}"
+		"pl"		"Admin {1} ustawił wygaśnięcie VIP gracza {2} na {3}"
+		"tr"		"Admin {1}, {2} oyuncusunun VIP durumunu {3} tarihinde bitecek şekilde ayarladı"
+		"it"		"L'admin {1} ha impostato la scadenza dello stato VIP di {2} al {3}"
+		"zho"		"管理員 {1} 已將 {2} 的 VIP 狀態設定為 {3} 到期"
+		"cze"		"Admin {1} nastavil vypršení VIP hráče {2} na {3}"
 	}
 	"ADMIN_SET_PERMANENT"
 	{
@@ -313,6 +418,11 @@
 		"es"		"El VIP de {1} ahora es permanente"
 		"ua"		"VIP-статус гравця {1} тепер безстроковий"
 		"chi"		"{1} 的 VIP 已设置为永久"
+		"pl"		"VIP gracza {1} ustawiono jako stały"
+		"tr"		"{1} oyuncusunun VIP durumu kalıcı yapıldı"
+		"it"		"Lo stato VIP di {1} è stato impostato come permanente"
+		"zho"		"{1} 的 VIP 狀態已設為永久"
+		"cze"		"VIP hráče {1} bylo nastaveno jako trvalé"
 	}
 	"LOG_ADMIN_SET_PERMANENT"
 	{
@@ -328,6 +438,11 @@
 		"es"		"El admin {1} ha hecho permanente el VIP de {2}"
 		"ua"		"Адмін {1} зробив VIP-статус гравця {2} безстроковим"
 		"chi"		"管理员 {1} 将 {2} 的 VIP 设置为永久"
+		"pl"		"Admin {1} ustawił VIP gracza {2} jako stały"
+		"tr"		"Admin {1}, {2} oyuncusunun VIP durumunu kalıcı yaptı"
+		"it"		"L'admin {1} ha impostato lo stato VIP di {2} come permanente"
+		"zho"		"管理員 {1} 已將 {2} 的 VIP 狀態設為永久"
+		"cze"		"Admin {1} nastavil VIP hráče {2} jako trvalé"
 	}
 	"MENU_TIME_ADD"
 	{
@@ -342,6 +457,11 @@
 		"es"		"Añadir tiempo"
 		"ua"		"Додати час"
 		"chi"		"增加时间"
+		"pl"		"Dodaj czas"
+		"tr"		"Süre ekle"
+		"it"		"Aggiungi tempo"
+		"zho"		"增加時間"
+		"cze"		"Přidat čas"
 	}
 	"ADMIN_EXTENDED"
 	{
@@ -357,6 +477,11 @@
 		"es"		"El VIP de {1} se ha extendido {2}"
 		"ua"		"Продовжено термін VIP-гравцю {1} на {2}"
 		"chi"		"{1} 的 VIP 已延长 {2}"
+		"pl"		"VIP gracza {1} przedłużono o {2}"
+		"tr"		"{1} oyuncusunun VIP süresi {2} uzatıldı"
+		"it"		"Il VIP di {1} è stato esteso di {2}"
+		"zho"		"{1} 的 VIP 已延長 {2}"
+		"cze"		"VIP hráče {1} bylo prodlouženo o {2}"
 	}
 	"LOG_ADMIN_EXTENDED"
 	{
@@ -372,6 +497,11 @@
 		"es"		"El admin {1} ha extendido el VIP de {2} {3}"
 		"ua"		"Адмін {1} продовжив термін VIP для гравця {2} на {3}"
 		"chi"		"管理员 {1} 将 {2} 的 VIP 延长了 {3}"
+		"pl"		"Admin {1} przedłużył VIP gracza {2} o {3}"
+		"tr"		"Admin {1}, {2} oyuncusunun VIP süresini {3} uzattı"
+		"it"		"L'admin {1} ha esteso il VIP di {2} di {3}"
+		"zho"		"管理員 {1} 已將 {2} 的 VIP 延長 {3}"
+		"cze"		"Admin {1} prodloužil VIP hráče {2} o {3}"
 	}
 	"UNABLE_TO_EXTENDED"
 	{
@@ -386,6 +516,11 @@
 		"es"		"No se puede extender el VIP de este jugador"
 		"ua"		"Неможливо продовжити VIP цього гравця"
 		"chi"		"无法延长该玩家的 VIP"
+		"pl"		"Nie można przedłużyć VIP tego gracza"
+		"tr"		"Bu oyuncunun VIP süresi uzatılamıyor"
+		"it"		"Impossibile estendere il VIP di questo giocatore"
+		"zho"		"無法延長此玩家的 VIP"
+		"cze"		"VIP tohoto hráče nelze prodloužit"
 	}
 	"MENU_TIME_TAKE"
 	{
@@ -400,6 +535,11 @@
 		"es"		"Reducir tiempo"
 		"ua"		"Скоротити термін"
 		"chi"		"减少时间"
+		"pl"		"Skróć czas"
+		"tr"		"Süreyi azalt"
+		"it"		"Riduci tempo"
+		"zho"		"減少時間"
+		"cze"		"Zkrátit čas"
 	}
 	"UNABLE_TO_REDUCE"
 	{
@@ -414,6 +554,11 @@
 		"es"		"No se puede reducir el VIP de este jugador"
 		"ua"		"Неможливо зменшити термін дії у цього VIP-гравця"
 		"chi"		"无法减少该玩家的 VIP 时间"
+		"pl"		"Nie można skrócić VIP tego gracza"
+		"tr"		"Bu oyuncunun VIP süresi azaltılamıyor"
+		"it"		"Impossibile ridurre il VIP di questo giocatore"
+		"zho"		"無法縮短此玩家的 VIP"
+		"cze"		"VIP tohoto hráče nelze zkrátit"
 	}
 	"ADMIN_REDUCED"
 	{
@@ -429,6 +574,11 @@
 		"es"		"El VIP de {1} se ha reducido {2}"
 		"ua"		"Скорочено термін VIP-гравцю {1} на {2}"
 		"chi"		"{1} 的 VIP 已减少 {2}"
+		"pl"		"VIP gracza {1} skrócono o {2}"
+		"tr"		"{1} oyuncusunun VIP süresi {2} azaltıldı"
+		"it"		"Il VIP di {1} è stato ridotto di {2}"
+		"zho"		"{1} 的 VIP 已縮短 {2}"
+		"cze"		"VIP hráče {1} bylo zkráceno o {2}"
 	}
 	"LOG_ADMIN_REDUCED"
 	{
@@ -444,6 +594,11 @@
 		"es"		"El admin {1} ha reducido el VIP de {2} {3}"
 		"ua"		"Адмін {1} зменшив термін дії VIP гравцю {2} до {3}"
 		"chi"		"管理员 {1} 将 {2} 的 VIP 减少了 {3}"
+		"pl"		"Admin {1} skrócił VIP gracza {2} o {3}"
+		"tr"		"Admin {1}, {2} oyuncusunun VIP süresini {3} azalttı"
+		"it"		"L'admin {1} ha ridotto il VIP di {2} di {3}"
+		"zho"		"管理員 {1} 已將 {2} 的 VIP 縮短 {3}"
+		"cze"		"Admin {1} zkrátil VIP hráče {2} o {3}"
 	}
 	"MENU_EDIT_GROUP"
 	{
@@ -458,6 +613,11 @@
 		"es"		"Editar grupo VIP"
 		"ua"		"Редагувати VIP-групу"
 		"chi"		"编辑 VIP 组"
+		"pl"		"Edytuj grupę VIP"
+		"tr"		"VIP grubunu düzenle"
+		"it"		"Modifica gruppo VIP"
+		"zho"		"編輯 VIP 群組"
+		"cze"		"Upravit VIP skupinu"
 	}
 	"CURRENT"
 	{
@@ -472,6 +632,11 @@
 		"es"		"Actual"
 		"ua"		"Поточна"
 		"chi"		"当前"
+		"pl"		"Obecna"
+		"tr"		"Mevcut"
+		"it"		"Attuale"
+		"zho"		"目前"
+		"cze"		"Aktuální"
 	}
 	"ADMIN_SET_GROUP"
 	{
@@ -487,6 +652,11 @@
 		"es"		"El grupo VIP de {1} se ha cambiado a {2}"
 		"ua"		"Група VIP-гравцю {1} змінена на {2}"
 		"chi"		"{1} 的 VIP 组已更改为 {2}"
+		"pl"		"Grupę VIP gracza {1} zmieniono na {2}"
+		"tr"		"{1} oyuncusunun VIP grubu {2} olarak değiştirildi"
+		"it"		"Il gruppo VIP di {1} è stato cambiato in {2}"
+		"zho"		"{1} 的 VIP 群組已變更為 {2}"
+		"cze"		"VIP skupina hráče {1} byla změněna na {2}"
 	}
 	"LOG_CHANGE_GROUP"
 	{
@@ -502,6 +672,11 @@
 		"es"		"Jugador VIP {1} (ID: {2}, Grupo: {3}) cambiado al grupo {4} {5}"
 		"ua"		"VIP-Гравцю {1} (ID: {2}, Група: {3}) змінено групу на {4} {5}"
 		"chi"		"VIP 玩家 {1}（ID：{2}，组：{3}）的组已更改为 {4}（{5}）"
+		"pl"		"Gracz VIP {1} (ID: {2}, Grupa: {3}) zmienił grupę na {4} {5}"
+		"tr"		"VIP oyuncu {1} (ID: {2}, Grup: {3}) grubu {4} olarak değiştirdi {5}"
+		"it"		"Giocatore VIP {1} (ID: {2}, Gruppo: {3}) ha cambiato gruppo in {4} {5}"
+		"zho"		"VIP 玩家 {1} (ID: {2}, 群組: {3}) 已將群組變更為 {4} {5}"
+		"cze"		"VIP hráč {1} (ID: {2}, Skupina: {3}) změnil skupinu na {4} {5}"
 	}
 	"MENU_DEL_VIP"
 	{
@@ -516,6 +691,11 @@
 		"es"		"Eliminar jugador VIP"
 		"ua"		"Видалити VIP-гравця"
 		"chi"		"移除 VIP 玩家"
+		"pl"		"Usuń gracza VIP"
+		"tr"		"VIP oyuncuyu kaldır"
+		"it"		"Rimuovi giocatore VIP"
+		"zho"		"移除 VIP 玩家"
+		"cze"		"Odebrat VIP hráče"
 	}
 	"ADMIN_VIP_PLAYER_DELETED"
 	{
@@ -531,6 +711,11 @@
 		"es"		"Jugador VIP {1} (ID: {2}) eliminado correctamente"
 		"ua"		"VIP-гравець {1} (ID: {2}) успішно видалений"
 		"chi"		"VIP 玩家 {1}（ID：{2}）已成功移除"
+		"pl"		"Gracz VIP {1} (ID: {2}) został usunięty"
+		"tr"		"VIP oyuncu {1} (ID: {2}) başarıyla kaldırıldı"
+		"it"		"Giocatore VIP {1} (ID: {2}) rimosso con successo"
+		"zho"		"VIP 玩家 {1} (ID: {2}) 已成功移除"
+		"cze"		"VIP hráč {1} (ID: {2}) byl úspěšně odebrán"
 	}
 	"LOG_VIP_DELETED"
 	{
@@ -546,6 +731,11 @@
 		"es"		"Jugador VIP {1} (ID: {2}, Grupo: {3}) eliminado {4}"
 		"ua"		"VIP-Гравець {1} (ID: {2}, Група: {3}) видалений {4}"
 		"chi"		"VIP 玩家 {1}（ID：{2}，组：{3}）已被移除（{4}）"
+		"pl"		"Gracz VIP {1} (ID: {2}, Grupa: {3}) usunięty {4}"
+		"tr"		"VIP oyuncu {1} (ID: {2}, Grup: {3}) kaldırıldı {4}"
+		"it"		"Giocatore VIP {1} (ID: {2}, Gruppo: {3}) rimosso {4}"
+		"zho"		"VIP 玩家 {1} (ID: {2}, 群組: {3}) 已移除 {4}"
+		"cze"		"VIP hráč {1} (ID: {2}, Skupina: {3}) odebrán {4}"
 	}
 	"MENU_LIST_VIP"
 	{
@@ -560,6 +750,11 @@
 		"es"		"Lista de jugadores VIP"
 		"ua"		"Список VIP-гравців"
 		"chi"		"VIP 玩家列表"
+		"pl"		"Lista graczy VIP"
+		"tr"		"VIP oyuncuları listele"
+		"it"		"Elenco giocatori VIP"
+		"zho"		"VIP 玩家列表"
+		"cze"		"Seznam VIP hráčů"
 	}
 	"MENU_SEARCH"
 	{
@@ -575,6 +770,11 @@
 		"es"		"Búsqueda: {1}\nEncontrados: {2} jugadores"
 		"ua"		"За запитом: {1}\nЗнайдено: {2} гравців"
 		"chi"		"搜索：{1}\n找到：{2} 名玩家"
+		"pl"		"Szukaj: {1}\nZnaleziono: {2} graczy"
+		"tr"		"Arama: {1}\nBulunan: {2} oyuncu"
+		"it"		"Ricerca: {1}\nTrovati: {2} giocatori"
+		"zho"		"搜尋: {1}\n找到: {2} 位玩家"
+		"cze"		"Hledání: {1}\nNalezeno: {2} hráčů"
 	}
 	"MENU_INFO_VIP_PLAYER"
 	{
@@ -590,6 +790,11 @@
 		"es"		"Información:\n \nNombre:\n{1}\nSteamID:\n{2}\nGrupo:\n{3}\nExpira:\n{4}"
 		"ua"		"Інформація:\n \nІм'я:\n{1}\nSteamID:\n{2}\nГрупа:\n{3}\nЗакінчується:\n{4}"
 		"chi"		"信息：\n \n名称：\n{1}\nSteamID：\n{2}\n组：\n{3}\n到期：\n{4}"
+		"pl"		"Informacje:\n \nNick:\n{1}\nSteamID:\n{2}\nGrupa:\n{3}\nWygasa:\n{4}"
+		"tr"		"Bilgi:\n \nİsim:\n{1}\nSteamID:\n{2}\nGrup:\n{3}\nBitiş:\n{4}"
+		"it"		"Informazioni:\n \nNome:\n{1}\nSteamID:\n{2}\nGruppo:\n{3}\nScadenza:\n{4}"
+		"zho"		"資訊:\n \n名稱:\n{1}\nSteamID:\n{2}\n群組:\n{3}\n到期:\n{4}"
+		"cze"		"Informace:\n \nJméno:\n{1}\nSteamID:\n{2}\nSkupina:\n{3}\nVyprší:\n{4}"
 	}
 	"TEMPORARY"
 	{
@@ -604,6 +809,11 @@
 		"es"		"Temporal"
 		"ua"		"Тимчасовий"
 		"chi"		"临时"
+		"pl"		"Tymczasowy"
+		"tr"		"Geçici"
+		"it"		"Temporaneo"
+		"zho"		"臨時"
+		"cze"		"Dočasný"
 	}
 	"INFO"
 	{
@@ -618,6 +828,11 @@
 		"es"		"Información"
 		"ua"		"Інформація"
 		"chi"		"信息"
+		"pl"		"Informacje"
+		"tr"		"Bilgi"
+		"it"		"Informazioni"
+		"zho"		"資訊"
+		"cze"		"Informace"
 	}
 	"CONFIRM"
 	{
@@ -632,6 +847,11 @@
 		"es"		"Confirmar"
 		"ua"		"Підтвердити"
 		"chi"		"确认"
+		"pl"		"Potwierdź"
+		"tr"		"Onayla"
+		"it"		"Conferma"
+		"zho"		"確認"
+		"cze"		"Potvrdit"
 	}
 	"CANCEL"
 	{
@@ -646,6 +866,11 @@
 		"es"		"Cancelar"
 		"ua"		"Скасувати"
 		"chi"		"取消"
+		"pl"		"Anuluj"
+		"tr"		"İptal"
+		"it"		"Annulla"
+		"zho"		"取消"
+		"cze"		"Zrušit"
 	}
 	"ERROR"
 	{
@@ -660,6 +885,11 @@
 		"es"		"ERROR"
 		"ua"		"Сталася помилка"
 		"chi"		"错误"
+		"pl"		"BŁĄD"
+		"tr"		"HATA"
+		"it"		"ERRORE"
+		"zho"		"錯誤"
+		"cze"		"CHYBA"
 	}
 	"NO_PLAYERS_AVAILABLE"
 	{
@@ -674,6 +904,11 @@
 		"es"		"¡No hay jugadores disponibles!"
 		"ua"		"Немає доступних гравців!"
 		"chi"		"没有可用的玩家！"
+		"pl"		"Brak dostępnych graczy!"
+		"tr"		"Uygun oyuncu yok!"
+		"it"		"Nessun giocatore disponibile!"
+		"zho"		"沒有可用的玩家!"
+		"cze"		"Žádní dostupní hráči!"
 	}
 	"FAILED_TO_LOAD_PLAYER"
 	{
@@ -688,6 +923,11 @@
 		"es"		"¡No se pudo cargar el jugador!"
 		"ua"		"Не вдалося завантажити гравця!"
 		"chi"		"无法加载玩家！"
+		"pl"		"Nie udało się wczytać gracza!"
+		"tr"		"Oyuncu yüklenemedi!"
+		"it"		"Impossibile caricare il giocatore!"
+		"zho"		"無法載入玩家!"
+		"cze"		"Hráče se nepodařilo načíst!"
 	}
 	"VIP_PLAYERS"
 	{
@@ -702,6 +942,11 @@
 		"es"		"Jugadores VIP"
 		"ua"		"VIP гравці"
 		"chi"		"VIP 玩家"
+		"pl"		"Gracze VIP"
+		"tr"		"VIP Oyuncular"
+		"it"		"Giocatori VIP"
+		"zho"		"VIP 玩家"
+		"cze"		"VIP hráči"
 	}
 	"NO_GROUPS_AVAILABLE"
 	{
@@ -716,6 +961,11 @@
 		"es"		"¡No hay grupos disponibles!"
 		"ua"		"Немає доступних груп!"
 		"chi"		"没有可用的组！"
+		"pl"		"Brak dostępnych grup!"
+		"tr"		"Uygun grup yok!"
+		"it"		"Nessun gruppo disponibile!"
+		"zho"		"沒有可用的群組!"
+		"cze"		"Žádné dostupné skupiny!"
 	}
 	"ADMIN_MENU_RELOAD_VIP_PLAYES"
 	{
@@ -730,6 +980,11 @@
 		"es"		"Recargar jugadores VIP"
 		"ua"		"Перезавантажити VIP-гравців"
 		"chi"		"重新加载 VIP 玩家"
+		"pl"		"Przeładuj graczy VIP"
+		"tr"		"VIP oyuncuları yeniden yükle"
+		"it"		"Ricarica giocatori VIP"
+		"zho"		"重新載入 VIP 玩家"
+		"cze"		"Znovu načíst VIP hráče"
 	}
 	"VIP_CACHE_REFRESHED"
 	{
@@ -744,6 +999,11 @@
 		"es"		"¡La caché VIP se ha actualizado!"
 		"ua"		"Кеш VIP було оновлено!"
 		"chi"		"VIP 缓存已刷新！"
+		"pl"		"Pamięć podręczna VIP została odświeżona!"
+		"tr"		"VIP önbelleği yenilendi!"
+		"it"		"La cache VIP è stata aggiornata!"
+		"zho"		"VIP 快取已重新整理!"
+		"cze"		"Mezipaměť VIP byla obnovena!"
 	}
 	"ADMIN_MENU_RELOAD_VIP_CFG"
 	{
@@ -758,6 +1018,11 @@
 		"es"		"Recargar ajustes VIP"
 		"ua"		"Перезавантажити налаштування VIP"
 		"chi"		"重新加载 VIP 设置"
+		"pl"		"Przeładuj ustawienia VIP"
+		"tr"		"VIP ayarlarını yeniden yükle"
+		"it"		"Ricarica impostazioni VIP"
+		"zho"		"重新載入 VIP 設定"
+		"cze"		"Znovu načíst nastavení VIP"
 	}
 	"VIP_CFG_REFRESHED"
 	{
@@ -772,6 +1037,11 @@
 		"es"		"¡Los ajustes VIP se han recargado!"
 		"ua"		"Налаштування VIP були перезавантажені!"
 		"chi"		"VIP 设置已重新加载！"
+		"pl"		"Ustawienia VIP zostały przeładowane!"
+		"tr"		"VIP ayarları yeniden yüklendi!"
+		"it"		"Le impostazioni VIP sono state ricaricate!"
+		"zho"		"VIP 設定已重新載入!"
+		"cze"		"Nastavení VIP bylo znovu načteno!"
 	}
 	"BY_ADMIN"
 	{
@@ -786,6 +1056,11 @@
 		"es"		"por el admin"
 		"ua"		"адміном"
 		"chi"		"由管理员"
+		"pl"		"przez admina"
+		"tr"		"admin tarafından"
+		"it"		"dall'admin"
+		"zho"		"由管理員"
+		"cze"		"adminem"
 	}
 	"BY_SERVER"
 	{
@@ -800,6 +1075,11 @@
 		"es"		"por el servidor"
 		"ua"		"сервером"
 		"chi"		"由服务器"
+		"pl"		"przez serwer"
+		"tr"		"sunucu tarafından"
+		"it"		"dal server"
+		"zho"		"由伺服器"
+		"cze"		"serverem"
 	}
 	"BY_PLUGIN"
 	{
@@ -814,6 +1094,11 @@
 		"es"		"por el plugin"
 		"ua"		"плагіном"
 		"chi"		"由插件"
+		"pl"		"przez plugin"
+		"tr"		"eklenti tarafından"
+		"it"		"dal plugin"
+		"zho"		"由外掛"
+		"cze"		"pluginem"
 	}
 	"REASON_EXPIRED"
 	{
@@ -828,6 +1113,11 @@
 		"es"		"Expirado"
 		"ua"		"Закінчився термін"
 		"chi"		"已过期"
+		"pl"		"Wygasł"
+		"tr"		"Süresi doldu"
+		"it"		"Scaduto"
+		"zho"		"已到期"
+		"cze"		"Vypršelo"
 	}
 	"REASON_INACTIVITY"
 	{
@@ -842,6 +1132,11 @@
 		"es"		"Por inactividad"
 		"ua"		"Через неактивність"
 		"chi"		"因不活跃"
+		"pl"		"Z powodu braku aktywności"
+		"tr"		"İnaktiflik nedeniyle"
+		"it"		"Per inattività"
+		"zho"		"因不活躍"
+		"cze"		"Pro neaktivitu"
 	}
 	"GROUP"
 	{
@@ -856,6 +1151,11 @@
 		"es"		"Grupo VIP"
 		"ua"		"VIP-Група"
 		"chi"		"VIP 组"
+		"pl"		"Grupa VIP"
+		"tr"		"VIP Grubu"
+		"it"		"Gruppo VIP"
+		"zho"		"VIP 群組"
+		"cze"		"VIP skupina"
 	}
 	"NONE"
 	{
@@ -870,6 +1170,11 @@
 		"es"		"Ninguno"
 		"ua"		"Немає"
 		"chi"		"无"
+		"pl"		"Brak"
+		"tr"		"Yok"
+		"it"		"Nessuno"
+		"zho"		"無"
+		"cze"		"Žádné"
 	}
 	"NEVER"
 	{
@@ -884,6 +1189,11 @@
 		"es"		"Nunca"
 		"ua"		"Ніколи"
 		"chi"		"永不"
+		"pl"		"Nigdy"
+		"tr"		"Asla"
+		"it"		"Mai"
+		"zho"		"永不"
+		"cze"		"Nikdy"
 	}
 	"EXPIRE"
 	{
@@ -898,6 +1208,11 @@
 		"es"		"en"
 		"ua"		"Через"
 		"chi"		"剩余"
+		"pl"		"za"
+		"tr"		"sonra"
+		"it"		"tra"
+		"zho"		"剩餘"
+		"cze"		"za"
 	}
 	"EXPIRED"
 	{
@@ -912,6 +1227,11 @@
 		"es"		"Expirado"
 		"ua"		"Закінчився"
 		"chi"		"已过期"
+		"pl"		"Wygasł"
+		"tr"		"Süresi doldu"
+		"it"		"Scaduto"
+		"zho"		"已到期"
+		"cze"		"Vypršelo"
 	}
 	"ENTER_AUTH"
 	{
@@ -926,6 +1246,11 @@
 		"es"		"Escribe en el chat Nombre/SteamID\ny pulsa"
 		"ua"		"Введіть в чат Ім'я/SteamId\nі натисніть"
 		"chi"		"请在聊天框输入名称/SteamID\n然后点击"
+		"pl"		"Wpisz nick/SteamID na czacie\n i naciśnij"
+		"tr"		"Sohbete bir isim/SteamID yaz\n ve şuna bas:"
+		"it"		"Scrivi un nome/SteamID in chat\n e premi"
+		"zho"		"在聊天中輸入名稱/SteamID\n 然後按"
+		"cze"		"Napiš do chatu jméno/SteamID\n a stiskni"
 	}
 	"PERMANENT"
 	{
@@ -940,6 +1265,11 @@
 		"es"		"Permanente"
 		"ua"		"Назавжди"
 		"chi"		"永久"
+		"pl"		"Stały"
+		"tr"		"Kalıcı"
+		"it"		"Permanente"
+		"zho"		"永久"
+		"cze"		"Trvalé"
 	}
 	"INCORRECT_TIME"
 	{
@@ -954,6 +1284,11 @@
 		"es"		"Tiempo incorrecto"
 		"ua"		"Некоректний час"
 		"chi"		"时间无效"
+		"pl"		"Nieprawidłowy czas"
+		"tr"		"Geçersiz süre"
+		"it"		"Durata non valida"
+		"zho"		"時間不正確"
+		"cze"		"Nesprávný čas"
 	}
 	"FIND_THE_ID_FAIL"
 	{
@@ -968,6 +1303,11 @@
 		"es"		"Sintaxis: sm_delvip <vip-id>"
 		"ua"		"Використовуйте: sm_delvip <ідентифікатор>"
 		"chi"		"用法：sm_delvip <vip-id>"
+		"pl"		"Składnia: sm_delvip <vip-id>"
+		"tr"		"Składnia: sm_delvip <vip-id>"
+		"it"		"Składnia: sm_delvip <vip-id>"
+		"zho"		"Składnia: sm_delvip <vip-id>"
+		"cze"		"Składnia: sm_delvip <vip-id>"
 	}
 	"VIP_PLAYER_NOT_FOUND"
 	{
@@ -982,6 +1322,11 @@
 		"es"		"¡Jugador VIP no encontrado!"
 		"ua"		"VIP-гравця не знайдено!"
 		"chi"		"未找到该 VIP 玩家！"
+		"pl"		"Nie znaleziono gracza VIP!"
+		"tr"		"VIP oyuncu bulunamadı!"
+		"it"		"Giocatore VIP non trovato!"
+		"zho"		"找不到 VIP 玩家!"
+		"cze"		"VIP hráč nenalezen!"
 	}
 	"INCORRECT_USAGE"
 	{
@@ -996,6 +1341,11 @@
 		"es"		"Uso incorrecto"
 		"ua"		"Неправильне використання"
 		"chi"		"用法错误"
+		"pl"		"Nieprawidłowe użycie"
+		"tr"		"Hatalı kullanım"
+		"it"		"Uso non corretto"
+		"zho"		"用法不正確"
+		"cze"		"Nesprávné použití"
 	}
 	"USE"
 	{
@@ -1010,6 +1360,11 @@
 		"es"		"Usar:"
 		"ua"		"Використовуйте:"
 		"chi"		"用法："
+		"pl"		"Użycie:"
+		"tr"		"Kullanım:"
+		"it"		"Uso:"
+		"zho"		"用法:"
+		"cze"		"Použití:"
 	}
 	"ALREADY_HAS_VIP"
 	{
@@ -1024,6 +1379,11 @@
 		"es"		"¡Este jugador ya tiene VIP!"
 		"ua"		"Гравець вже має VIP-статус!"
 		"chi"		"该玩家已经拥有 VIP！"
+		"pl"		"Ten gracz ma już VIP!"
+		"tr"		"Bu oyuncunun zaten VIP'i var!"
+		"it"		"Questo giocatore ha già il VIP!"
+		"zho"		"此玩家已擁有 VIP!"
+		"cze"		"Tento hráč už VIP má!"
 	}
 	"ADMIN_GROUP_DOES_NOT_EXIST"
 	{
@@ -1038,6 +1398,11 @@
 		"es"		"¡El grupo de admin especificado no existe!"
 		"ua"		"Вказана адмін-група не існує!"
 		"chi"		"指定的管理员组不存在！"
+		"pl"		"Podana grupa admina nie istnieje!"
+		"tr"		"Belirtilen admin grubu mevcut değil!"
+		"it"		"Il gruppo admin specificato non esiste!"
+		"zho"		"指定的管理員群組不存在!"
+		"cze"		"Zadaná admin skupina neexistuje!"
 	}
 	"VIP_GROUP_DOES_NOT_EXIST"
 	{
@@ -1052,6 +1417,11 @@
 		"es"		"¡El grupo VIP especificado no existe!"
 		"ua"		"Зазначена VIP-група не існує!"
 		"chi"		"指定的 VIP 组不存在！"
+		"pl"		"Podana grupa VIP nie istnieje!"
+		"tr"		"Belirtilen VIP grubu mevcut değil!"
+		"it"		"Il gruppo VIP specificato non esiste!"
+		"zho"		"指定的 VIP 群組不存在!"
+		"cze"		"Zadaná VIP skupina neexistuje!"
 	}
 	"FIND_PLAYER"
 	{
@@ -1066,6 +1436,11 @@
 		"es"		"Buscar un jugador"
 		"ua"		"Знайти гравця"
 		"chi"		"搜索玩家"
+		"pl"		"Wyszukaj gracza"
+		"tr"		"Oyuncu ara"
+		"it"		"Cerca un giocatore"
+		"zho"		"搜尋玩家"
+		"cze"		"Hledat hráče"
 	}
 	"SHOW_ALL"
 	{
@@ -1080,6 +1455,11 @@
 		"es"		"Mostrar todos los jugadores"
 		"ua"		"Показати всіх"
 		"chi"		"显示所有玩家"
+		"pl"		"Pokaż wszystkich graczy"
+		"tr"		"Tüm oyuncuları göster"
+		"it"		"Mostra tutti i giocatori"
+		"zho"		"顯示所有玩家"
+		"cze"		"Zobrazit všechny hráče"
 	}
 	"SHOW_MORE"
 	{
@@ -1094,6 +1474,11 @@
 		"es"		"Mostrar más"
 		"ua"		"Показати ще"
 		"chi"		"显示更多"
+		"pl"		"Pokaż więcej"
+		"tr"		"Daha fazla göster"
+		"it"		"Mostra altro"
+		"zho"		"顯示更多"
+		"cze"		"Zobrazit více"
 	}
 	"y."
 	{
@@ -1108,6 +1493,11 @@
 		"es"		"a."
 		"ua"		"р."
 		"chi"		"年"
+		"pl"		"r."
+		"tr"		"y."
+		"it"		"a."
+		"zho"		"年"
+		"cze"		"r."
 	}
 	"d."
 	{
@@ -1122,6 +1512,11 @@
 		"es"		"d."
 		"ua"		"д."
 		"chi"		"天"
+		"pl"		"d."
+		"tr"		"g."
+		"it"		"g."
+		"zho"		"天"
+		"cze"		"d."
 	}
 	"h."
 	{
@@ -1136,6 +1531,11 @@
 		"es"		"h."
 		"ua"		"г."
 		"chi"		"小时"
+		"pl"		"godz."
+		"tr"		"sa."
+		"it"		"h."
+		"zho"		"小時"
+		"cze"		"hod."
 	}
 	"m."
 	{
@@ -1150,6 +1550,11 @@
 		"es"		"min."
 		"ua"		"хв."
 		"chi"		"分钟"
+		"pl"		"min."
+		"tr"		"dk."
+		"it"		"min."
+		"zho"		"分鐘"
+		"cze"		"min."
 	}
 	"s."
 	{
@@ -1164,5 +1569,10 @@
 		"es"		"seg."
 		"ua"		"сек."
 		"chi"		"秒"
+		"pl"		"sek."
+		"tr"		"sn."
+		"it"		"sec."
+		"zho"		"秒"
+		"cze"		"s."
 	}
 }
