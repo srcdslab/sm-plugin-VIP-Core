@@ -387,8 +387,14 @@ void Clients_LoadFeature(int iClient, const char[] szFeature)
 				case DISABLED:	eStatus = DISABLED;
 			}
 
-			IntToString(view_as<int>(eStatus), SZF(szBuffer));
-			hCookie.Set(iClient, szBuffer);
+			// Before clientprefs has loaded the player's cookies (VIP loaded from the cache
+			// at a map change), Get returns "": saving the default then would overwrite the
+			// player's choice when they disconnect. Timer_CheckCookies loads it again later.
+			if (AreClientCookiesCached(iClient))
+			{
+				IntToString(view_as<int>(eStatus), SZF(szBuffer));
+				hCookie.Set(iClient, szBuffer);
+			}
 			//	Features_SaveStatus(iClient, szFeature, hCookie, eStatus);
 		}
 	}
